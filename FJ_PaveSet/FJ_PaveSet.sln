@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_PaveSet", "FJ_PaveSet\FJ_PaveSet.csproj", "{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3EFDE445-2276-4354-BBD4-A41ECE41A150}
+	EndGlobalSection
+EndGlobal
