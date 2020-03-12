@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_MatDia", "FJ_MatDia\FJ_MatDia.csproj", "{FC329D2E-7EBF-487A-9AC9-B7B81FE020ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC329D2E-7EBF-487A-9AC9-B7B81FE020ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC329D2E-7EBF-487A-9AC9-B7B81FE020ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC329D2E-7EBF-487A-9AC9-B7B81FE020ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC329D2E-7EBF-487A-9AC9-B7B81FE020ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {91C4826A-766A-4281-858F-9E5E703B5AC7}
+	EndGlobalSection
+EndGlobal

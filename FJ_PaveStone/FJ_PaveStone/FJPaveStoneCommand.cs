@@ -39,7 +39,7 @@ namespace FJ_PaveStone
             List<Curve> icur = new List<Curve>();
 
             GetObject gcr = new Rhino.Input.Custom.GetObject();
-            gcr.SetCommandPrompt("Select reference circles for drill. (No curves)");
+            gcr.SetCommandPrompt("Select reference circles for stones. (No curves)");
             gcr.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
             gcr.GroupSelect = true;
             gcr.SubObjectSelect = true;
