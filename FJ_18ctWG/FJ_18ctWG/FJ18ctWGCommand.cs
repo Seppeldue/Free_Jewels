@@ -58,14 +58,12 @@ namespace FJ_18ctWG
                 Rhino.DocObjects.ObjRef objref = go.Object(i);
                 Rhino.DocObjects.RhinoObject obj = objref.Object();
                 obj.RenderMaterial = rm;
-                //obj.Attributes.MaterialIndex = wg18ctIndex;
                 obj.CommitChanges();
                 
             
             }
 
             doc.Views.Redraw();
-            RhinoApp.WriteLine(""+wg18ctIndex);
             return Result.Success;
         }
     }
