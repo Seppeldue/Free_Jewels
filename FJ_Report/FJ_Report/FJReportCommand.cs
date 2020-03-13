@@ -65,7 +65,7 @@ namespace FJ_Report
 
                     int match = stones.IndexOf(diamStone);
 
-                    if (match < 0)
+                    if (match == -1)
                     {
                         stones.Add(diamStone);
                         qStones.Add(1);
@@ -74,13 +74,12 @@ namespace FJ_Report
                     else
                     {
                         int currVal = qStones[match];
-                        currVal ++;
-                        qStones.Insert(match, currVal);
+                        qStones[match] = currVal +1;
                     }
 
                 }
 
-                else //if (objType == Rhino.DocObjects.ObjectType.AnyObject)
+                else 
                 {
                     Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
                     var matName = mat.Name;
@@ -107,7 +106,12 @@ namespace FJ_Report
 
                 items.Add("Brill: " + qStones[i] + " x " + stones[i] + "mm");
 
+            
+
             Dialogs.ShowListBox("Report", "Elements", items);
+
+            
+            
 
             return Result.Success;
         }
