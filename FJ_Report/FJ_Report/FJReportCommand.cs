@@ -35,12 +35,9 @@ namespace FJ_Report
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            RhinoApp.WriteLine("The {0} command is under construction.", EnglishName);
 
-            
             string yg18ctName = "18ct yellow gold";
             string wg18ctName = "18ct white gold";
-
 
             Rhino.DocObjects.ObjectEnumeratorSettings settings = new Rhino.DocObjects.ObjectEnumeratorSettings();
             settings.VisibleFilter = true;
@@ -70,15 +67,12 @@ namespace FJ_Report
                         stones.Add(diamStone);
                         qStones.Add(1);
                     }
-
                     else
                     {
                         int currVal = qStones[match];
                         qStones[match] = currVal +1;
                     }
-
                 }
-
                 else 
                 {
                     Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
@@ -99,19 +93,21 @@ namespace FJ_Report
                         items.Add("18ct yellow gold: " + gold18k + "g");
                     }
                 }
-
-                
             }
+
+            items.Add("------------------------------------");
+            double totalCt = 0.0;
             for (int i = 0; i < stones.Count; i++)
+            {
+                double ct;
+                ct = Math.Round((stones[i] * stones[i] * stones[i] * 0.6 * 0.0061), 4, MidpointRounding.AwayFromZero);
+                items.Add("Brill: " + qStones[i] + " x " + stones[i] + "mm " + ct +"ct Total: " + ct*qStones[i] + "ct");
+                totalCt = totalCt + ct * qStones[i];
+            }
 
-                items.Add("Brill: " + qStones[i] + " x " + stones[i] + "mm");
-
-            
+            items.Add("Total Brillant weight: " + totalCt + "ct");
 
             Dialogs.ShowListBox("Report", "Elements", items);
-
-            
-            
 
             return Result.Success;
         }
