@@ -6,6 +6,7 @@ using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
 using Rhino.UI;
+using System.Windows.Forms;
 
 
 namespace FJ_Report
@@ -31,8 +32,8 @@ namespace FJ_Report
             get { return "FJ_Report"; }
         }
 
-        
 
+        
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
 
@@ -83,7 +84,7 @@ namespace FJ_Report
                         Brep objrefBrep = objref.Brep();
                         double volObj = objrefBrep.GetVolume();
                         double gold18k = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add("18ct white gold: " + gold18k+"g");
+                        items.Add("18ct white gold: " + gold18k+" g");
                     }
                     else if (matName == yg18ctName)
                     {
@@ -101,13 +102,22 @@ namespace FJ_Report
             {
                 double ct;
                 ct = Math.Round((stones[i] * stones[i] * stones[i] * 0.6 * 0.0061), 4, MidpointRounding.AwayFromZero);
-                items.Add("Brill: " + qStones[i] + " x " + stones[i] + "mm " + ct +"ct Total: " + ct*qStones[i] + "ct");
+                items.Add("Brill: " + qStones[i] + " x " + stones[i] + " mm " + ct +" ct Total: " + ct*qStones[i] + " ct");
                 totalCt = totalCt + ct * qStones[i];
             }
 
-            items.Add("Total Brillant weight: " + totalCt + "ct");
+            items.Add("Total Brillant weight: " + totalCt + " ct");
 
-            Dialogs.ShowListBox("Report", "Elements", items);
+            String clipboardString = "";
+            foreach (String o in items)
+            {
+                clipboardString = clipboardString + o + "\n";
+            }
+
+            Clipboard.SetText(clipboardString);
+
+
+            Dialogs.ShowListBox("Report", "This data is copied to your clipboard \n Use Ctrl+V to paste", items);
 
             return Result.Success;
         }
