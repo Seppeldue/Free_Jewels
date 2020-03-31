@@ -28,7 +28,7 @@ namespace FJ_18ctYG
         {
             get { return "FJ_18ctYG"; }
         }
-
+        
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
             Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
@@ -40,28 +40,58 @@ namespace FJ_18ctYG
             go.DeselectAllBeforePostSelect = false;
             go.GetMultiple(1, 0);
 
-            Rhino.DocObjects.Material yg18ct = new Rhino.DocObjects.Material();
-            yg18ct.Reflectivity = 1;
-            yg18ct.ReflectionColor = System.Drawing.Color.FromArgb(235, 215, 142);
-            string yg18ctName = "18ct yellow gold";
-            yg18ct.Name = yg18ctName;
-            int wg18ctIndex = yg18ct.MaterialIndex;
+            
+            int findsRM = doc.Materials.Find("18ct yellow gold", true);
 
-            yg18ct.CommitChanges();
+            
 
-            var idwg18 = doc.Materials.Add(yg18ct);
-
-            var rmyg18 = Rhino.Render.RenderMaterial.CreateBasicMaterial(doc.Materials[idwg18]);
-            doc.RenderMaterials.Add(rmyg18);
-
-            for (int i = 0; i < go.ObjectCount; i++)
+            if (findsRM == -1)
             {
-                Rhino.DocObjects.ObjRef objref = go.Object(i);
-                Rhino.DocObjects.RhinoObject obj = objref.Object();
-                obj.RenderMaterial = rmyg18;
-                //obj.Attributes.MaterialIndex = wg18ctIndex;
-                obj.CommitChanges();
+                Rhino.DocObjects.Material yg18ct = new Rhino.DocObjects.Material();
+                yg18ct.Reflectivity = 1;
+                yg18ct.ReflectionColor = System.Drawing.Color.FromArgb(235, 215, 142);
+                string yg18ctName = "18ct yellow gold";
+                yg18ct.Name = yg18ctName;
+                yg18ct.CommitChanges();
 
+                var idwg18 = doc.Materials.Add(yg18ct);
+                var rmyg18 = Rhino.Render.RenderMaterial.CreateBasicMaterial(doc.Materials[idwg18]);
+                doc.RenderMaterials.Add(rmyg18);
+                for (int i = 0; i < go.ObjectCount; i++)
+                {
+                    Rhino.DocObjects.ObjRef objref = go.Object(i);
+                    Rhino.DocObjects.RhinoObject obj = objref.Object();
+                    obj.RenderMaterial = rmyg18;
+                    obj.CommitChanges();
+                }
+            }
+            else
+            {
+
+                for (int i = 0; i < go.ObjectCount; i++)
+                {
+
+                    Rhino.DocObjects.ObjRef objref = go.Object(i);
+                    Rhino.DocObjects.RhinoObject obj = objref.Object();
+                    var objRm = obj.RenderMaterial;
+
+                   
+                    if (objRm == null)
+                    {
+                        
+                        obj.RenderMaterial = doc.RenderMaterials[0];
+                        obj.CommitChanges();
+                        obj.Attributes.MaterialIndex = findsRM;
+                        obj.CommitChanges();
+                        
+                    }
+                    else
+                    { 
+                        obj.Attributes.MaterialIndex = findsRM;
+                        obj.CommitChanges();
+                    }
+
+                }
 
             }
 

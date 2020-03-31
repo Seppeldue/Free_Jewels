@@ -37,8 +37,7 @@ namespace FJ_Report
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
 
-            string yg18ctName = "18ct yellow gold";
-            string wg18ctName = "18ct white gold";
+            String[] matName = new String[] { "WhiteGold_18ct", "YellowGold_18ct", "RedGold_18ct", "RodiumBlack_18ct", "Silver_925", "Platinum_960", "Ruby", "Emerald", "Saphir", "Paraiba", "Granat", "Amethyst", "Morganite", "Diamond" };
 
             Rhino.DocObjects.ObjectEnumeratorSettings settings = new Rhino.DocObjects.ObjectEnumeratorSettings();
             settings.VisibleFilter = true;
@@ -71,32 +70,62 @@ namespace FJ_Report
                     else
                     {
                         int currVal = qStones[match];
-                        qStones[match] = currVal +1;
+                        qStones[match] = currVal + 1;
                     }
                 }
-                else 
+                else if (objType == Rhino.DocObjects.ObjectType.Surface | objType == Rhino.DocObjects.ObjectType.PolysrfFilter | objType == Rhino.DocObjects.ObjectType.Brep | objType == Rhino.DocObjects.ObjectType.Extrusion)
                 {
                     Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
-                    var matName = mat.Name;
-                    RhinoApp.WriteLine(matName);
-                    if (matName == wg18ctName)
+                    var objMatName = mat.Name;
+                    int pos = Array.IndexOf(matName, objMatName);
+                    //RhinoApp.WriteLine(matName);
+                    if (pos < 4)
                     {
                         Brep objrefBrep = objref.Brep();
                         double volObj = objrefBrep.GetVolume();
                         double gold18k = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add("18ct white gold: " + gold18k+" g");
+                        items.Add(matName[pos] + " " + gold18k + " g");
                     }
-                    else if (matName == yg18ctName)
+                    else if (pos == 4)
                     {
                         Brep objrefBrep = objref.Brep();
                         double volObj = objrefBrep.GetVolume();
-                        double gold18k = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add("18ct yellow gold: " + gold18k + "g");
+                        double silver925 = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
+                        items.Add(matName[pos] + " " + silver925 + " g");
+                    }
+                    else if (pos == 5)
+                    {
+                        Brep objrefBrep = objref.Brep();
+                        double volObj = objrefBrep.GetVolume();
+                        double plat960 = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
+                        items.Add(matName[pos] + " " + plat960 + " g");
                     }
                 }
+                else if (objType == Rhino.DocObjects.ObjectType.Mesh)
+                {
+                    Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
+                    var objMatName = mat.Name;
+                    int pos = Array.IndexOf(matName, objMatName);
+
+                    if (pos == 13)
+                    {
+                        Mesh objrefMesh = objref.Mesh();
+                        double volObj = objrefMesh.Volume();
+                        double diaCt = Math.Round(volObj * 0.02, 4, MidpointRounding.AwayFromZero);
+                        items.Add(matName[pos] + " " + diaCt + " ct");
+                    }
+                    else if (pos < 13)
+                    {
+                        Mesh objrefMesh = objref.Mesh();
+                        double volObj = objrefMesh.Volume();
+                        double colStone = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
+                        items.Add(matName[pos] + " " + colStone + " ct");
+                    }
+                }
+
             }
 
-            items.Add("------------------------------------");
+            items.Add("----------From circles-------------");
             double totalCt = 0.0;
             for (int i = 0; i < stones.Count; i++)
             {

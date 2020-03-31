@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension">
+  <Product Id="*" 
+           Name="Free Jewels" 
+           Language="1033" 
+           Version="1.0.0.0" 
+           Manufacturer="Free Jewels" 
+           UpgradeCode="d62c1559-b5a9-4c3f-9724-6860c498639f">
+		<Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perUser"
+             Manufacturer="Free Jewels"
+             Description="Jewelry plugin for Rhino6"
+             Languages="1033" />
+
+		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    
+		<MediaTemplate EmbedCab="yes"  />
+
+    <!-- Define the Free Jewels icon to show in the Add/Remove Programs (ARP) dialog-->
+    <Icon Id="FreeJewels.ico" SourceFile="$(var.ProjectDir)\FreeJewelsIcon.ico"/>
+    <Property Id="ARPPRODUCTICON">FreeJewelsIcon.ico"</Property>
+    
+    <!-- Create simple UI for the installer-->
+    <UIRef Id="WixUI_Minimal"/>
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Assets\InstallerBackground2.bmp"/>
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\Assets\InstallerBanner2.bmp"/>
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\Assets\FJ_license.rtf"/>
+    
+      <!-- Check for .NET 4.0 -->
+    <PropertyRef Id="NETFRAMEWORK40FULL"/>
+    <Condition Message="This application requires .NET Framework 4.0. Please install the .NET Framework then run this installer again.">
+      <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
+    </Condition>
+
+    <!-- Check for Rhino 6.0 -->
+    <Property Id="RHINOX64">
+      <RegistrySearch Id="TestAppRegSearch"
+                      Root="HKLM"
+                      Key="SOFTWARE\McNeel\Rhinoceros\6.0\Install"
+                      Name="Version"
+                      Type="raw" Win64="yes"/>
+      <!-- Win64=yes is REQUIRED! -->
+    </Property>
+
+    <!-- TODO: check the actual version of Rhino against the version used to build the plug-ins -->
+    <Condition Message="[ProductName] require Rhino 6.0. Please install Rhino then run this installer again.">
+      <![CDATA[Installed OR RHINOX64]]>
+    </Condition>
+
+
+    <Feature Id="FreeJewelsInstaller" Title="Free Jewels" Level="1">
+      <!--  Dependencies -->
+      <ComponentGroupRef Id="ProductComponents"/>
+      <!-- Common plug-in -->
+      <Feature Id="FJ_Expand" Title="Expand.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="Expand.Installer"/>
+      </Feature>
+		</Feature>
+	</Product>
+
+  <!-- This is where the merge modules are referenced. Each plug-in creates a merge module -->
+  <Fragment Id="FRG_Merge">
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="Expand.Installer"      
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Expand\Expand.Installer\bin\Debug\Expand.Installer.msm"       
+             Language="1033" 
+             DiskId="1"/>
+    </DirectoryRef>
+  </Fragment>
+  
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir"></Directory>
+    <ComponentGroup Id="ProductComponents" Directory="TARGETDIR">
+      <!-- TODO: Remove the comments around this Component element and the ComponentRef below in order to add resources to this installer. -->
+      <!-- <Component Id="ProductComponent"> -->
+      <!-- TODO: Insert files, registry keys, and other resources here. -->
+      <!-- </Component> -->
+    </ComponentGroup>
+  </Fragment>
+
+	
+</Wix>
