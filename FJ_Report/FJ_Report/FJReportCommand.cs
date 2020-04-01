@@ -32,7 +32,23 @@ namespace FJ_Report
             get { return "FJ_Report"; }
         }
 
-
+        void CalMat(RhinoDoc doc, double spezWeight, Rhino.DocObjects.ObjectType objType, Rhino.DocObjects.ObjRef objref, List<string> matList, String[] matName,int pos, string g_ct)
+        {
+            if ((objType == Rhino.DocObjects.ObjectType.Surface | objType == Rhino.DocObjects.ObjectType.PolysrfFilter | objType == Rhino.DocObjects.ObjectType.Brep | objType == Rhino.DocObjects.ObjectType.Extrusion))
+            {
+                Brep objrefBrep = objref.Brep();
+                double volObj = objrefBrep.GetVolume();
+                double weight = Math.Round(volObj * spezWeight, 3, MidpointRounding.AwayFromZero);
+                matList.Add(matName[pos] + " " + weight + g_ct);
+            }
+            else if (objType == Rhino.DocObjects.ObjectType.Mesh)
+            {
+                Mesh objrefMesh = objref.Mesh();
+                double volObj = objrefMesh.Volume();
+                double weight = Math.Round(volObj * spezWeight, 3, MidpointRounding.AwayFromZero);
+                matList.Add(matName[pos] + " " + weight + g_ct);
+            }
+        }
         
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
@@ -42,9 +58,11 @@ namespace FJ_Report
             Rhino.DocObjects.ObjectEnumeratorSettings settings = new Rhino.DocObjects.ObjectEnumeratorSettings();
             settings.VisibleFilter = true;
             System.Collections.Generic.List<Guid> ids = new System.Collections.Generic.List<Guid>();
-            List<string> items = new List<string>();
-            List<double> stones = new List<double>();
-            List<int> qStones = new List<int>();
+            List<string> allItems = new List<string>();
+            List<string> metalItems = new List<string>();
+            List<string> stoneItems = new List<string>();
+            List<double> circleStones = new List<double>();
+            List<int> quantCirclesStones = new List<int>();
 
             foreach (Rhino.DocObjects.RhinoObject rhObj in doc.Objects.GetObjectList(settings))
             {
@@ -60,85 +78,107 @@ namespace FJ_Report
                     curveRadius.TryGetCircle(out circleRadius, doc.ModelAbsoluteTolerance);
                     double diamStone = Math.Round(circleRadius.Diameter, 2, MidpointRounding.AwayFromZero);
 
-                    int match = stones.IndexOf(diamStone);
+                    int match = circleStones.IndexOf(diamStone);
 
                     if (match == -1)
                     {
-                        stones.Add(diamStone);
-                        qStones.Add(1);
+                        circleStones.Add(diamStone);
+                        quantCirclesStones.Add(1);
                     }
                     else
                     {
-                        int currVal = qStones[match];
-                        qStones[match] = currVal + 1;
+                        int currVal = quantCirclesStones[match];
+                        quantCirclesStones[match] = currVal + 1;
                     }
                 }
-                else if (objType == Rhino.DocObjects.ObjectType.Surface | objType == Rhino.DocObjects.ObjectType.PolysrfFilter | objType == Rhino.DocObjects.ObjectType.Brep | objType == Rhino.DocObjects.ObjectType.Extrusion)
-                {
-                    Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
-                    var objMatName = mat.Name;
-                    int pos = Array.IndexOf(matName, objMatName);
-                    //RhinoApp.WriteLine(matName);
-                    if (pos < 4)
-                    {
-                        Brep objrefBrep = objref.Brep();
-                        double volObj = objrefBrep.GetVolume();
-                        double gold18k = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add(matName[pos] + " " + gold18k + " g");
-                    }
-                    else if (pos == 4)
-                    {
-                        Brep objrefBrep = objref.Brep();
-                        double volObj = objrefBrep.GetVolume();
-                        double silver925 = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add(matName[pos] + " " + silver925 + " g");
-                    }
-                    else if (pos == 5)
-                    {
-                        Brep objrefBrep = objref.Brep();
-                        double volObj = objrefBrep.GetVolume();
-                        double plat960 = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add(matName[pos] + " " + plat960 + " g");
-                    }
-                }
-                else if (objType == Rhino.DocObjects.ObjectType.Mesh)
-                {
-                    Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
-                    var objMatName = mat.Name;
-                    int pos = Array.IndexOf(matName, objMatName);
 
-                    if (pos == 13)
-                    {
-                        Mesh objrefMesh = objref.Mesh();
-                        double volObj = objrefMesh.Volume();
-                        double diaCt = Math.Round(volObj * 0.02, 4, MidpointRounding.AwayFromZero);
-                        items.Add(matName[pos] + " " + diaCt + " ct");
-                    }
-                    else if (pos < 13)
-                    {
-                        Mesh objrefMesh = objref.Mesh();
-                        double volObj = objrefMesh.Volume();
-                        double colStone = Math.Round(volObj * 0.0158, 2, MidpointRounding.AwayFromZero);
-                        items.Add(matName[pos] + " " + colStone + " ct");
-                    }
+                Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
+                var objMatName = mat.Name;
+                int pos = Array.IndexOf(matName, objMatName);
+                switch (pos)
+                {
+                    //18ctGold
+                    case int n when (n < 4):
+                        double gold18ct = 0.016;
+                        CalMat(doc, gold18ct, objType, objref, metalItems, matName, pos, " g");
+                        break;
+                    //Silver
+                    case 4:
+                        double silver = 0.0105;
+                        CalMat(doc, silver ,objType, objref, metalItems, matName,pos, " g");
+                        break;
+                    //Platinum
+                    case 5:
+                        double platinum = 0.0203;
+                        CalMat(doc, platinum, objType, objref, metalItems, matName, pos, " g");
+                        break;
+                    //ColorStones ruby=4g Emerald=2.65g saphr=4g Paraiba=3g Granat=3.9g Amethyst=2.65 Morganite=2.65
+                    case 6:
+                        double ruby = 0.02;
+                        CalMat(doc, ruby, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    case 7:
+                        double emerald = 0.0133;
+                        CalMat(doc, emerald, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    case 8:
+                        double saphir = 0.02;
+                        CalMat(doc, saphir, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    case 9:
+                        double paraiba = 0.015;
+                        CalMat(doc, paraiba, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    case 10:
+                        double granat = 0.0195;
+                        CalMat(doc, granat, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    case 11:
+                        double amethyst = 0.0133;
+                        CalMat(doc, amethyst, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    case 12:
+                        double morganite = 0.0133;
+                        CalMat(doc, morganite, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
+                    //Diamond
+                    case 13:
+                        double diamond = 0.02;
+                        CalMat(doc, diamond, objType, objref, stoneItems, matName, pos, " ct");
+                        break;
                 }
 
             }
 
-            items.Add("----------From circles-------------");
+            metalItems.Sort();
+            stoneItems.Sort();
+
+            allItems.Add("--------------Metals--------------");
+            for (int i = 0; i < metalItems.Count; i++)
+            {
+                allItems.Add(metalItems[i]);
+            }
+
+            allItems.Add("--------------Stone---------------");
+            for (int i = 0; i < stoneItems.Count; i++)
+            {
+                allItems.Add(stoneItems[i]);
+            }
+
+            allItems.Add("----------From circles------------");
             double totalCt = 0.0;
-            for (int i = 0; i < stones.Count; i++)
+            for (int i = 0; i < circleStones.Count; i++)
             {
                 double ct;
-                ct = Math.Round((stones[i] * stones[i] * stones[i] * 0.6 * 0.0061), 4, MidpointRounding.AwayFromZero);
-                items.Add("Brill: " + qStones[i] + " x " + stones[i] + " mm " + ct +" ct Total: " + ct*qStones[i] + " ct");
-                totalCt = totalCt + ct * qStones[i];
+                ct = Math.Round((circleStones[i] * circleStones[i] * circleStones[i] * 0.6 * 0.0061), 4, MidpointRounding.AwayFromZero);
+                allItems.Add("Brill: " + quantCirclesStones[i] + " x " + circleStones[i] + " mm " + ct +" ct Total: " + ct*quantCirclesStones[i] + " ct");
+                totalCt = totalCt + ct * quantCirclesStones[i];
             }
 
-            items.Add("Total Brillant weight: " + totalCt + " ct");
+            allItems.Add("Total Brillant weight: " + totalCt + " ct");
 
             String clipboardString = "";
-            foreach (String o in items)
+            foreach (String o in allItems)
             {
                 clipboardString = clipboardString + o + "\n";
             }
@@ -146,7 +186,7 @@ namespace FJ_Report
             Clipboard.SetText(clipboardString);
 
 
-            Dialogs.ShowListBox("Report", "This data is copied to your clipboard \n Use Ctrl+V to paste", items);
+            Dialogs.ShowListBox("Report", "This data is copied to your clipboard \n Use Ctrl+V to paste", allItems);
 
             return Result.Success;
         }
