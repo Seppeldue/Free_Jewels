@@ -24,8 +24,8 @@
     
     <!-- Create simple UI for the installer-->
     <UIRef Id="WixUI_Minimal"/>
-    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Assets\InstallerBackground2.bmp"/>
-    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\Assets\InstallerBanner2.bmp"/>
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Assets\InstallerBackground.bmp"/>
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\Assets\InstallerBanner.bmp"/>
     <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\Assets\FJ_license.rtf"/>
     
       <!-- Check for .NET 4.0 -->
@@ -57,7 +57,40 @@
       <Feature Id="FJ_Expand" Title="Expand.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="Expand.Installer"/>
       </Feature>
-		</Feature>
+      <Feature Id="FJ_GemMaker" Title="GemMaker.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="GemMaker.Installer"/>
+      </Feature>
+      <Feature Id="FJ_IterativeBoolDif" Title="IterativeBoolDif.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="IterativeBoolDif.Installer"/>
+      </Feature>
+      <Feature Id="FJ_IterativeBoolUn" Title="IterativeBoolUn.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="IterativeBoolUn.Installer"/>
+      </Feature>
+      <Feature Id="FJ_Mat" Title="Mat.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="Mat.Installer"/>
+      </Feature>
+      <Feature Id="FJ_MirrorCurve" Title="MirrorCurve.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="MirrorCurve.Installer"/>
+      </Feature>
+      <Feature Id="FJ_OrientObjOnSurface" Title="OrientObjOnSurface.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="OrientObjOnSurface.Installer"/>
+      </Feature>
+      <Feature Id="FJ_PaveDrill" Title="PaveDrill.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="PaveDrill.Installer"/>
+      </Feature>
+      <Feature Id="FJ_PaveSet" Title="PaveSet.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="PaveSet.Installer"/>
+      </Feature>
+      <Feature Id="FJ_PaveStone" Title="PaveStone.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="PaveStone.Installer"/>
+      </Feature>
+      <Feature Id="FJ_Report" Title="Report.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="Report.Installer"/>
+      </Feature>
+      <Feature Id="FJ_FreeJewelsToolbar" Title="FreeJewelsToolbar.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="FreeJewelsToolbar.Installer"/>
+      </Feature>
+    </Feature>
 	</Product>
 
   <!-- This is where the merge modules are referenced. Each plug-in creates a merge module -->
@@ -66,6 +99,72 @@
       <Merge Id="Expand.Installer"      
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Expand\Expand.Installer\bin\Debug\Expand.Installer.msm"       
              Language="1033" 
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="GemMaker.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_GemMaker\GemMaker.Installer\bin\Debug\GemMaker.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="IterativeBoolDif.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_IterativeBoolDif\IterativeBoolDif.Installer\bin\Debug\IterativeBoolDif.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="IterativeBoolUn.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_IterativeBoolUn\IterativeBoolUn.Installer\bin\Debug\IterativeBoolUn.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="Mat.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Mat\Mat.Installer\bin\Debug\Mat.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="MirrorCurve.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_MirrorCurve\MirrorCurve.Installer\bin\Debug\MirrorCurve.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="OrientObjOnSurface.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_OrientObjOnSurface\OrientObjOnSurface.Installer\bin\Debug\OrientObjOnSurface.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="PaveDrill.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_PaveDrill\PaveDrill.Installer\bin\Debug\PaveDrill.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="PaveSet.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_PaveSet\PaveSet.Installer\bin\Debug\PaveSet.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="PaveStone.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_PaveStone\PaveStone.Installer\bin\Debug\PaveStone.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="Report.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Report\Report.Installer\bin\Debug\Report.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="FreeJewelsToolbar.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_FreeJewelsToolbar\FreeJewelsToolbar.Installer\bin\Debug\FreeJewelsToolbar.Installer.msm"
+             Language="1033"
              DiskId="1"/>
     </DirectoryRef>
   </Fragment>

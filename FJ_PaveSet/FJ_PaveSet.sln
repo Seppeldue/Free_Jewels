@@ -5,16 +5,30 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_PaveSet", "FJ_PaveSet\FJ_PaveSet.csproj", "{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "PaveSet.Installer", "PaveSet.Installer\PaveSet.Installer.wixproj", "{60616176-8825-46A7-B04D-BA37446AD847}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Debug|x86.Build.0 = Debug|Any CPU
 		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Release|Any CPU.Build.0 = Release|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Release|x86.ActiveCfg = Release|Any CPU
+		{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}.Release|x86.Build.0 = Release|Any CPU
+		{60616176-8825-46A7-B04D-BA37446AD847}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{60616176-8825-46A7-B04D-BA37446AD847}.Debug|x86.ActiveCfg = Debug|x86
+		{60616176-8825-46A7-B04D-BA37446AD847}.Debug|x86.Build.0 = Debug|x86
+		{60616176-8825-46A7-B04D-BA37446AD847}.Release|Any CPU.ActiveCfg = Release|x86
+		{60616176-8825-46A7-B04D-BA37446AD847}.Release|x86.ActiveCfg = Release|x86
+		{60616176-8825-46A7-B04D-BA37446AD847}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

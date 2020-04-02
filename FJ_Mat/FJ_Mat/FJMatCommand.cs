@@ -91,7 +91,7 @@ namespace FJ_Mat
                 custom.Shine = fjMatShine[currIntOption];
                 custom.Name = matName[currIntOption];
                 if (currIntOption == 13)
-                    custom.SetEnvironmentTexture(@"../Dia3.jpg");
+                    custom.SetEnvironmentTexture(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"/Free Jewels Rhino Plug-Ins/Dia3.jpg");
                 custom.CommitChanges();
 
                 rm = RenderMaterial.CreateBasicMaterial(custom);

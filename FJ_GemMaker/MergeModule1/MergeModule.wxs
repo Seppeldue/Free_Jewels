@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-	<Module Id="Expand.Installer" Language="1033" Version="1.0.0.0">
-		<Package Id="{87E9EA07-02B9-4AFA-9420-1A05D4EE356A}" 
-             Manufacturer="Free Jewels" 
+  <Module Id="GemMaker.Installer" Language="1033" Version="1.0.0.0">
+    <Package Id="{3AB82CFE-AF8E-461B-96E3-4FC8B8D9BAAE}"
+             Manufacturer="Free Jewels"
              InstallerVersion="200" />
 
     <!-- This next bit defines the plug-in file and registry entry for Rhino -->
@@ -12,29 +12,29 @@
         <!-- Our directory is called MARIN Rhino Plug-Ins -->
         <Directory Id="PLUGINFOLDER" Name="Free Jewels Rhino Plug-Ins" >
           <!-- this defines the RHP file -->
-          <Component Id="FJ_Expand" Guid="{3BA4D0EF-9988-45F3-9F1B-2E20F39A9F8F}">
+          <Component Id="FJ_GemMaker" Guid="{686E1853-01A2-43B5-B7C9-6F6028DD412A}">
             <!-- Install the plug-in from dev/bin/win64/Release to the plug-in folder-->
-            <File Id="FJ_Expand" Name="FJ_Expand.rhp" Source="C:/Users/SEB/source/Repos/Free_Jewels/Free_Jewels_Privat/FJ_Expand/FJ_Expand/bin/FJ_Expand.rhp"/>
+            <File Id="FJ_GemMaker" Name="FJ_GemMaker.rhp" Source="C:/Users/SEB/source/Repos/Free_Jewels/Free_Jewels_Privat/FJ_GemMaker/FJ_GemMaker/bin/FJ_GemMaker.rhp"/>
 
             <!-- this is required because we install in the user profile -->
             <RemoveFolder Id="remPLUGINFOLDER" Directory="PLUGINFOLDER" On="uninstall"/>
 
             <!-- this is required because we install in the user profile -->
             <RegistryKey Root="HKCU" Key="Software\Free Jewels\RhinoPlugIns">
-              <RegistryValue Name="FJ_Expand" Value="1" KeyPath="yes" Type="integer"/>
+              <RegistryValue Name="FJ_GemMaker" Value="1" KeyPath="yes" Type="integer"/>
             </RegistryKey>
 
             <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
-            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\90995098-a19f-41c8-a9ba-eedcdc4540dd">
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\bb411d5f-5b74-4414-a1d5-94c500e9f0f5">
               <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
-              <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_Expand.rhp" Type="string"/>
+              <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_GemMaker.rhp" Type="string"/>
             </RegistryKey>
 
             <!-- when uninstalling, remove the registry entry for this plug-in -->
-            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\90995098-a19f-41c8-a9ba-eedcdc4540dd" Action="removeOnUninstall" />
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\bb411d5f-5b74-4414-a1d5-94c500e9f0f5" Action="removeOnUninstall" />
           </Component>
         </Directory>
       </Directory>
     </Directory>
-	</Module>
+  </Module>
 </Wix>

@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_FreeJewelsToolbar", "FJ_FreeJewelsToolbar\FJ_FreeJewelsToolbar.csproj", "{593E0DC7-931F-471E-9C69-55AC04D763F6}"
+EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "FreeJewelsToolbar.Installer", "FreeJewelsToolbar.Installer\FreeJewelsToolbar.Installer.wixproj", "{831857BC-F524-4546-9F30-EF2141947789}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Debug|x86.Build.0 = Debug|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Release|x86.ActiveCfg = Release|Any CPU
+		{593E0DC7-931F-471E-9C69-55AC04D763F6}.Release|x86.Build.0 = Release|Any CPU
+		{831857BC-F524-4546-9F30-EF2141947789}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{831857BC-F524-4546-9F30-EF2141947789}.Debug|x86.ActiveCfg = Debug|x86
+		{831857BC-F524-4546-9F30-EF2141947789}.Debug|x86.Build.0 = Debug|x86
+		{831857BC-F524-4546-9F30-EF2141947789}.Release|Any CPU.ActiveCfg = Release|x86
+		{831857BC-F524-4546-9F30-EF2141947789}.Release|x86.ActiveCfg = Release|x86
+		{831857BC-F524-4546-9F30-EF2141947789}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4A89F158-6953-41E4-992F-4CA462612315}
+	EndGlobalSection
+EndGlobal
