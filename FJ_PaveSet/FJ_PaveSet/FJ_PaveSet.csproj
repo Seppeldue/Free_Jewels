@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{967D8EE2-D7F6-4C2C-87C5-FBBCB7D62766}</ProjectGuid>
+    <ProjectGuid>{6C4C4616-3C1F-4529-8E2F-3BF18E48E6F8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FJ_PaveSet</RootNamespace>

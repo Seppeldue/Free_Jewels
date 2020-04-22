@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{85FE44F1-0E54-428B-A050-27E9093BC7CE}</ProjectGuid>
+    <ProjectGuid>{870A7BEE-3A04-4E7A-9B91-97CE78502E47}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FJ_Report</RootNamespace>

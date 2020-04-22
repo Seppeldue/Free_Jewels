@@ -25,13 +25,13 @@
             </RegistryKey>
 
             <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
-            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\90995098-a19f-41c8-a9ba-eedcdc4540dd">
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\ACDA898B-0D68-45CB-855F-40BC573D5E9B">
               <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
               <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_Expand.rhp" Type="string"/>
             </RegistryKey>
 
             <!-- when uninstalling, remove the registry entry for this plug-in -->
-            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\90995098-a19f-41c8-a9ba-eedcdc4540dd" Action="removeOnUninstall" />
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\ACDA898B-0D68-45CB-855F-40BC573D5E9B" Action="removeOnUninstall" />
           </Component>
         </Directory>
       </Directory>

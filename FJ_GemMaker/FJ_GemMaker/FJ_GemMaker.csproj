@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{BB411D5F-5B74-4414-A1D5-94C500E9F0F5}</ProjectGuid>
+    <ProjectGuid>{F1774261-49D0-41A3-829E-6D5D6F0D52C3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FJ_GemMaker</RootNamespace>

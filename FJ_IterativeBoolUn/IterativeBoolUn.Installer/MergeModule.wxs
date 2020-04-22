@@ -25,13 +25,13 @@
             </RegistryKey>
 
             <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
-            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\8e5303e7-cdb6-45f1-b739-04a3941c00c9">
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\D546749E-D850-4A59-BEF6-599681F7CEE0">
               <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
               <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_IterativeBoolUn.rhp" Type="string"/>
             </RegistryKey>
 
             <!-- when uninstalling, remove the registry entry for this plug-in -->
-            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\8e5303e7-cdb6-45f1-b739-04a3941c00c9" Action="removeOnUninstall" />
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\D546749E-D850-4A59-BEF6-599681F7CEE0" Action="removeOnUninstall" />
           </Component>
         </Directory>
       </Directory>

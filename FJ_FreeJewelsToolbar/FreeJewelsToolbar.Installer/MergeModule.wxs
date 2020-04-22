@@ -26,13 +26,13 @@
             </RegistryKey>
 
             <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
-            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\593e0dc7-931f-471e-9c69-55ac04d763f6">
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\C38E2F5F-A238-40CC-9A04-CB8F38C5F46B">
               <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
               <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_FreeJewelsToolbar.rhp" Type="string"/>
             </RegistryKey>
 
             <!-- when uninstalling, remove the registry entry for this plug-in -->
-            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\593e0dc7-931f-471e-9c69-55ac04d763f6" Action="removeOnUninstall" />
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\C38E2F5F-A238-40CC-9A04-CB8F38C5F46B" Action="removeOnUninstall" />
           </Component>
         </Directory>
       </Directory>

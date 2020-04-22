@@ -25,13 +25,13 @@
             </RegistryKey>
 
             <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
-            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\ffdf4fda-af7e-4a32-a28e-f31e5c6f9940">
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\7AA70195-0624-4F94-BF4B-80C9B472F9EC">
               <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
               <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_Mat.rhp" Type="string"/>
             </RegistryKey>
 
             <!-- when uninstalling, remove the registry entry for this plug-in -->
-            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\ffdf4fda-af7e-4a32-a28e-f31e5c6f9940" Action="removeOnUninstall" />
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\7AA70195-0624-4F94-BF4B-80C9B472F9EC" Action="removeOnUninstall" />
           </Component>
         </Directory>
       </Directory>

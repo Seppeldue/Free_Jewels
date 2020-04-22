@@ -74,21 +74,26 @@ namespace FJ_Expand
 
                 for (int i = 0; i < goList.Count; i++)
                 {
+                    Rhino.Geometry.Vector3d vec = (centers[i] - scaleCenter) * (factorTemp - 1);
                     Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
 
-                    Point3d vec1D2 = new Point3d(centers[i] - scaleCenter);
-                    Point3d vec1D1 = new Point3d(scaleRefPoint - scaleCenter);
-
-                    double x = vec1D1.X - vec1D2.X;
-                    double y = vec1D1.Y - vec1D2.Y;
-                    double z = vec1D1.Z - vec1D2.Z;
-                    Point3d vec1D3 = new Point3d(x, y, z);
-
-                    Rhino.Geometry.Vector3d vec1 = new Vector3d(vec1D3);
-                    vec1 = vec1 * (factorTemp - 1);
-
-                    var xform = Rhino.Geometry.Transform.Translation(vec1);
-
+                    Vector3d planeNormal = plane2D.Normal;
+                    if (planeNormal[0] != 0)
+                    {
+                        vec.X = 0;
+                        vec.Y = 0;
+                    }
+                    else if (planeNormal[1] != 0)
+                    {
+                        vec.Y = 0;
+                        vec.Z = 0;
+                    }
+                    else if (planeNormal[2] != 0)
+                    {
+                        vec.Z = 0;
+                        vec.X = 0;
+                    }
+                    var xform = Rhino.Geometry.Transform.Translation(vec);
                     e.Display.DrawObject(rhobj, xform);
                 }
 
@@ -232,17 +237,23 @@ namespace FJ_Expand
                 //Translate 1d
                 else if (dimensionIndex == 2)
                 {
-                    Point3d vec1D1 = new Point3d(centers[i] - scaleCenter);
-                    Point3d vec1D2 = new Point3d(scaleRefPoint - scaleCenter);
-
-                    double x = vec1D1.X / vec1D2.X;
-                    double y = vec1D1.Y / vec1D2.Y;
-                    double z = vec1D1.Z / vec1D2.Z;
-                    Point3d vec1D3 = new Point3d(x, y, z);
-
-                    Rhino.Geometry.Vector3d vec = new Vector3d(vec1D3);
-                    vec = vec * (factor - 1);
-
+                    Rhino.Geometry.Vector3d vec = (centers[i] - scaleCenter) * (factor - 1);
+                    Vector3d planeNormal = plane2D.Normal;
+                    if (planeNormal[0] != 0)
+                    {
+                        vec.X = 0;
+                        vec.Y = 0;
+                    }
+                    else if (planeNormal[1] != 0)
+                    {
+                        vec.Y = 0;
+                        vec.Z = 0;
+                    }
+                    else if (planeNormal[2] != 0)
+                    {
+                        vec.Z = 0;
+                        vec.X = 0;
+                    }
                     var xform = Rhino.Geometry.Transform.Translation(vec);
                     doc.Objects.Transform(go.Object(i), xform, true);
                 }

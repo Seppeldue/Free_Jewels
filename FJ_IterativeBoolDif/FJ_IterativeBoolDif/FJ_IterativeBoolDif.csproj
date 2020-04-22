@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{99B537D5-73FF-437B-8C42-2EC07F07552D}</ProjectGuid>
+    <ProjectGuid>{2B8FDD07-A383-464E-8406-8F08620C7C72}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FJ_IterativeBoolDif</RootNamespace>
