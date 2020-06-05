@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Module Id="GemMaker.Installer" Language="1033" Version="1.0.0.0">
+  <Module Id="GemMaker.Installer" Language="1033" Version="1.0.0.1">
     <Package Id="{D4932EB3-6AD3-48B9-8E8F-13F8ECD4E810}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />

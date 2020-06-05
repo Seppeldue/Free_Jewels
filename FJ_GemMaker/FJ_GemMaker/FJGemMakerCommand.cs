@@ -31,7 +31,7 @@ namespace FJ_GemMaker
 
 
 
-        public static void BrillantGem(RhinoDoc doc, double brillDiam)
+        public static Guid BrillantGem(RhinoDoc doc, double brillDiam)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -126,11 +126,12 @@ namespace FJ_GemMaker
             meshAll.Weld(0.001);
             meshAll.Scale(brillDiam);
 
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
         }
         double brillDiam = 1;
 
-        public static void OvalGem(RhinoDoc doc, double ovalWidth, double ovalLength)
+        public static Guid OvalGem(RhinoDoc doc, double ovalWidth, double ovalLength)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -230,12 +231,13 @@ namespace FJ_GemMaker
             Transform scale1D = new Transform();
             scale1D = Transform.Scale(pl0, ovalWidth, ovalLength, ovalWidth);
             meshAll.Transform(scale1D);
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
         }
         double ovalLength = 1.5;
         double ovalWidth = 1.0;
 
-        public static void BaguetteGem(RhinoDoc doc, double bagWidth, double bagLength)
+        public static Guid BaguetteGem(RhinoDoc doc, double bagWidth, double bagLength)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -306,12 +308,13 @@ namespace FJ_GemMaker
             Transform scale1D = new Transform();
             scale1D = Transform.Scale(pl0, bagWidth, bagLength, bagWidth);
             meshAll.Transform(scale1D);
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
         }
         double bagLength = 1.0;
         double bagWidth = 0.62;
 
-        public static void EmeraldGem(RhinoDoc doc, double emWidth, double emLength, double em2Width, double em2Length, double emHigth, double emGridle, double emTop, double emFatt, double emLine)
+        public static Guid EmeraldGem(RhinoDoc doc, double emWidth, double emLength, double em2Width, double em2Length, double emHigth, double emGridle, double emTop, double emFatt, double emLine)
         {
             double emFat3 = 1 + (emFatt / 20);
             double emFat2 = 1 + (emFatt / 50);
@@ -419,8 +422,8 @@ namespace FJ_GemMaker
             }
             meshAll.Compact();
             meshAll.Weld(0.001);
-
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
 
         }
         double emLength = 2.0;
@@ -433,7 +436,7 @@ namespace FJ_GemMaker
         double emLine = 0.65;
         double emFatt = 1.0;
 
-        public static void PearGem(RhinoDoc doc, double pearLength, double pearWidth)
+        public static Guid PearGem(RhinoDoc doc, double pearLength, double pearWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -568,14 +571,14 @@ namespace FJ_GemMaker
             Transform scale3D = new Transform();
             scale3D = Transform.Scale(pl0, pearWidth, (pearLength / 1.6), pearWidth);
             meshAll.Transform(scale3D);
-
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
 
         }
         double pearLength = 1.6;
         double pearWidth = 1.0;
 
-        public static void NavGem(RhinoDoc doc, double navLength, double navWidth)
+        public static Guid NavGem(RhinoDoc doc, double navLength, double navWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -699,13 +702,14 @@ namespace FJ_GemMaker
             Transform scale3D = new Transform();
             scale3D = Transform.Scale(pl0, navWidth, (navLength / 2.2), navWidth);
             meshAll2.Transform(scale3D);
-
-            doc.Objects.AddMesh(meshAll2);
+            Guid stone = doc.Objects.AddMesh(meshAll2);
+            return stone;
+            
         }
         double navLength = 2.2;
         double navWidth = 1.0;
 
-        public static void PrincessGem(RhinoDoc doc, double princeLength)
+        public static Guid PrincessGem(RhinoDoc doc, double princeLength)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -769,11 +773,12 @@ namespace FJ_GemMaker
             meshAll.Compact();
             meshAll.Weld(0.001);
             meshAll.Scale(princeLength);
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
         }
         double princeLength = 1.0;
 
-        public static void TrapGem(RhinoDoc doc, double tL, double tW1, double tW2)
+        public static Guid TrapGem(RhinoDoc doc, double tL, double tW1, double tW2)
         {
             double br1 = tW2 / tW1;
             double br2 = br1 + ((1 - br1) / 2);
@@ -859,15 +864,14 @@ namespace FJ_GemMaker
             mesh.RebuildNormals();
             mesh.Compact();
             mesh.Weld(0.001);
-
-
-            doc.Objects.AddMesh(mesh);
+            Guid stone = doc.Objects.AddMesh(mesh);
+            return stone;
         }
         double tL = 1.0;
         double tW1 = 0.62;
         double tW2 = 0.4;
 
-        public static void TrilGem(RhinoDoc doc, double trilLength)
+        public static Guid TrilGem(RhinoDoc doc, double trilLength)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -943,13 +947,13 @@ namespace FJ_GemMaker
             meshAll.Weld(0.001);
 
             meshAll.Scale(trilLength);
-
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
 
         }
         double trilLength = 1.0;
 
-        public static void CushGem(RhinoDoc doc, double cushLength, double cushWidth)
+        public static Guid CushGem(RhinoDoc doc, double cushLength, double cushWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -1034,12 +1038,13 @@ namespace FJ_GemMaker
             Transform scale1D = new Transform();
             scale1D = Transform.Scale(pl0, cushLength, cushWidth, cushWidth);
             meshAll.Transform(scale1D);
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
         }
         double cushLength = 1.5;
         double cushWidth = 1.0;
 
-        public static void AntGem(RhinoDoc doc, double antLength, double antWidth)
+        public static Guid AntGem(RhinoDoc doc, double antLength, double antWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -1124,7 +1129,8 @@ namespace FJ_GemMaker
             Transform scale1D = new Transform();
             scale1D = Transform.Scale(pl0, antLength, antWidth, antWidth);
             meshAll.Transform(scale1D);
-            doc.Objects.AddMesh(meshAll);
+            Guid stone = doc.Objects.AddMesh(meshAll);
+            return stone;
         }
         double antLength = 1.5;
         double antWidth = 1.0;
@@ -1187,19 +1193,30 @@ namespace FJ_GemMaker
 
             if (brillantCut)
             {
-                GetOption stoneDiam = new GetOption();
-                stoneDiam.SetCommandPrompt("Please choose brilliant diameter.");
-                var diamBrill = new Rhino.Input.Custom.OptionDouble(brillDiam);
-                stoneDiam.AddOptionDouble("Diameter", ref diamBrill);
-                stoneDiam.Get();
-                brillDiam = diamBrill.CurrentValue;
-                BrillantGem(doc, brillDiam);
+                while (true)
+                {
+                    Guid stone = BrillantGem(doc, brillDiam);
+                    doc.Views.Redraw();
+                    GetOption stoneDiam = new GetOption();
+                    stoneDiam.SetCommandPrompt("Please choose brilliant diameter.");
+                    stoneDiam.AcceptNothing(true);
+                    var diamBrill = new Rhino.Input.Custom.OptionDouble(brillDiam);
+                    stoneDiam.AddOptionDouble("Diameter", ref diamBrill);
+                    GetResult res = stoneDiam.Get();
+                    brillDiam = diamBrill.CurrentValue;
+                    if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
+                }
+                
             }
 
             if (ovalCut)
             {
                 while (true)
                 {
+                    
+                    Guid stone = OvalGem(doc, ovalLength, ovalWidth);
+                    doc.Views.Redraw();
                     GetOption stoneOval = new GetOption();
                     stoneOval.SetCommandPrompt("Please choose oval cut lenght and width.");
                     stoneOval.AcceptNothing(true);
@@ -1211,15 +1228,17 @@ namespace FJ_GemMaker
                     ovalLength = lengthOval.CurrentValue;
                     ovalWidth = widthOval.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                OvalGem(doc, ovalLength, ovalWidth);
             }
 
             if (baguetteCut)
             {
                 while (true)
                 {
+                    Guid stone = BaguetteGem(doc, bagLength, bagWidth);
+                    doc.Views.Redraw();
                     GetOption stoneBag = new GetOption();
                     stoneBag.SetCommandPrompt("Please choose baguette cut lenght and width.");
                     stoneBag.AcceptNothing(true);
@@ -1231,20 +1250,29 @@ namespace FJ_GemMaker
                     bagLength = lengthBag.CurrentValue;
                     bagWidth = widthBag.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                BaguetteGem(doc, bagLength, bagWidth);
+                
             }
 
             if (princessCut)
             {
-                GetOption stonePrince = new GetOption();
-                stonePrince.SetCommandPrompt("Please choose princess cut length.");
-                var lengthPrince = new Rhino.Input.Custom.OptionDouble(princeLength);
-                stonePrince.AddOptionDouble("Length", ref lengthPrince);
-                stonePrince.Get();
-                princeLength = lengthPrince.CurrentValue;
-                PrincessGem(doc, princeLength);
+                while (true)
+                {
+                    Guid stone = PrincessGem(doc, princeLength);
+                    doc.Views.Redraw();
+                    GetOption stonePrince = new GetOption();
+                    stonePrince.SetCommandPrompt("Please choose princess cut length.");
+                    stonePrince.AcceptNothing(true);
+                    var lengthPrince = new Rhino.Input.Custom.OptionDouble(princeLength);
+                    stonePrince.AddOptionDouble("Length", ref lengthPrince);
+                    GetResult res = stonePrince.Get();
+                    princeLength = lengthPrince.CurrentValue;
+                    if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
+                }
+
             }
 
             if (emeraldCut)
@@ -1252,6 +1280,8 @@ namespace FJ_GemMaker
 
                 while (true)
                 {
+                    Guid stone = EmeraldGem(doc, emWidth, emLength, em2Width, em2Length, emHigth, emGridle, emTop, emFatt, emLine);
+                    doc.Views.Redraw();
                     GetOption stoneEm = new GetOption();
                     stoneEm.SetCommandPrompt("Please choose emerald cut length and width.");
                     stoneEm.AcceptNothing(true);
@@ -1286,14 +1316,17 @@ namespace FJ_GemMaker
                     emLine = lineEm.CurrentValue;
 
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
-                EmeraldGem(doc, emWidth, emLength, em2Width, em2Length, emHigth, emGridle, emTop, emFatt, emLine);
+                
             }
 
             if (pearCut)
             {
                 while (true)
                 {
+                    Guid stone = PearGem(doc, pearLength, pearWidth);
+                    doc.Views.Redraw();
                     GetOption stonePear = new GetOption();
                     stonePear.SetCommandPrompt("Please choose pear cut lenght and width.");
                     stonePear.AcceptNothing(true);
@@ -1305,15 +1338,18 @@ namespace FJ_GemMaker
                     pearLength = lengthPear.CurrentValue;
                     pearWidth = widthPear.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                PearGem(doc, pearLength, pearWidth);
+                
             }
 
             if (navCut)
             {
                 while (true)
                 {
+                    Guid stone = NavGem(doc, navLength, navWidth);
+                    doc.Views.Redraw();
                     GetOption stoneNav = new GetOption();
                     stoneNav.SetCommandPrompt("Please choose navette cut lenght and width.");
                     stoneNav.AcceptNothing(true);
@@ -1325,49 +1361,63 @@ namespace FJ_GemMaker
                     navLength = lengthNav.CurrentValue;
                     navWidth = widthNav.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                NavGem(doc, navLength, navWidth);
+                
             }
 
             if (trapCut)
             {
                 while (true)
                 {
+                    Guid stone = TrapGem(doc, tL, tW1, tW2);
+                    doc.Views.Redraw();
                     GetOption stoneNav = new GetOption();
                     stoneNav.SetCommandPrompt("Please choose trapeze cut lenght, width 1 and width 2.");
                     stoneNav.AcceptNothing(true);
                     var trapL = new Rhino.Input.Custom.OptionDouble(tL);
                     stoneNav.AddOptionDouble("Length", ref trapL);
                     var trapW1 = new Rhino.Input.Custom.OptionDouble(tW1);
-                    stoneNav.AddOptionDouble("Width-1", ref trapW1);
+                    stoneNav.AddOptionDouble("Width1", ref trapW1);
                     var trapW2 = new Rhino.Input.Custom.OptionDouble(tW2);
-                    stoneNav.AddOptionDouble("Width-2", ref trapW2);
+                    stoneNav.AddOptionDouble("Width2", ref trapW2);
                     GetResult res = stoneNav.Get();
                     tL = trapL.CurrentValue;
                     tW1 = trapW1.CurrentValue;
                     tW2 = trapW2.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                TrapGem(doc, tL, tW1, tW2);
+                
             }
 
             if (trilCut)
             {
-                GetOption stoneTril = new GetOption();
-                stoneTril.SetCommandPrompt("Please choose trillon length.");
-                var lengthTril = new Rhino.Input.Custom.OptionDouble(trilLength);
-                stoneTril.AddOptionDouble("Length", ref lengthTril);
-                stoneTril.Get();
-                trilLength = lengthTril.CurrentValue;
-                TrilGem(doc, trilLength);
+                while (true)
+                {
+                    Guid stone = TrilGem(doc, trilLength);
+                    doc.Views.Redraw();
+                    GetOption stoneTril = new GetOption();
+                    stoneTril.SetCommandPrompt("Please choose trillon length.");
+                    stoneTril.AcceptNothing(true);
+                    var lengthTril = new Rhino.Input.Custom.OptionDouble(trilLength);
+                    stoneTril.AddOptionDouble("Length", ref lengthTril);
+                    GetResult res = stoneTril.Get();
+                    trilLength = lengthTril.CurrentValue;
+                    if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
+                }
+                
             }
 
             if (cushCut)
             {
                 while (true)
                 {
+                    Guid stone = CushGem(doc, cushLength, cushWidth);
+                    doc.Views.Redraw();
                     GetOption stoneCush = new GetOption();
                     stoneCush.SetCommandPrompt("Please choose oval cut lenght and width.");
                     stoneCush.AcceptNothing(true);
@@ -1379,15 +1429,18 @@ namespace FJ_GemMaker
                     cushLength = lengthCush.CurrentValue;
                     cushWidth = widthCush.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                CushGem(doc, cushLength, cushWidth);
+                
             }
 
             if (antCut)
             {
                 while (true)
                 {
+                    Guid stone = AntGem(doc, antLength, antWidth);
+                    doc.Views.Redraw();
                     GetOption stoneAnt = new GetOption();
                     stoneAnt.SetCommandPrompt("Please choose antique cut lenght and width.");
                     stoneAnt.AcceptNothing(true);
@@ -1399,9 +1452,9 @@ namespace FJ_GemMaker
                     antLength = lengthAnt.CurrentValue;
                     antWidth = widthAnt.CurrentValue;
                     if (res == GetResult.Nothing) break;
+                    doc.Objects.Delete(stone, false);
                 }
 
-                AntGem(doc, antLength, antWidth);
             }
 
             doc.Views.Redraw();
