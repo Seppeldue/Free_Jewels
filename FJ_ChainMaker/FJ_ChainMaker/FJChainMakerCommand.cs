@@ -31,6 +31,7 @@ namespace FJ_ChainMaker
 
         Plane sourcePlane;
         Curve curve;
+        double chainDis = 1.0;
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
@@ -72,6 +73,7 @@ namespace FJ_ChainMaker
             Point3d pt1 = gp1.Point();
             Rhino.Input.Custom.GetPoint gp2 = new Rhino.Input.Custom.GetPoint();
             gp2.SetCommandPrompt("Point for orientation");
+            gp2.DrawLineFromPoint(pt1,false);
             gp2.Get();
             if (gp2.CommandResult() != Rhino.Commands.Result.Success)
                 return gp2.CommandResult();
@@ -107,54 +109,54 @@ namespace FJ_ChainMaker
             var orientBlock = doc.InstanceDefinitions.Add("Block" + instDefCount, "OrientBlock", Point3d.Origin, obj1List);
 
             //orient instances along curve
+            
+            List<Guid> chainBlocks = new List<Guid>();
+            Guid chainBlock;
 
             while (true)
             {
-                double chainDis = 1.0;
+                
+
+                GetOption gd = new GetOption();
+                gd.SetCommandPrompt("Distance between element centers");
+                var dis = new Rhino.Input.Custom.OptionDouble(chainDis);
+                gd.AddOptionDouble("distance", ref dis);
+                gd.AcceptNothing(true);
+
+
+                var resdis = gd.Get();
+                if (resdis == GetResult.Nothing) break;
+
+                chainDis = dis.CurrentValue;
+
+
+                foreach (var block in chainBlocks)
+                {
+                    doc.Objects.Delete(block, false);
+                }
+                chainBlocks = new List<Guid>();
                 double curveLength = curve.GetLength();
                 double curveDivide = curveLength / chainDis;
                 int curveDivideInt = Convert.ToInt32(curveDivide);
-
-
-
 
                 for (int ic = 0; ic < curveDivideInt; ic++)
                 {
                     Point3d insertPoint = curve.PointAtLength(chainDis * ic);
                     Vector3d insertVec = curve.PointAtLength(chainDis * ic+1) - insertPoint;
+                    Plane targetPlane = new Plane(insertPoint, insertVec);
                     if (ic % 2 == 0)
-                    {
-                        Plane targetPlane = new Plane(insertPoint, insertVec);
-                        Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, targetPlane);
-                        doc.Objects.AddInstanceObject(orientBlock, xform);
-
-                    }
-                    else
-                    {
-                        Plane targetPlane = new Plane(insertPoint, insertVec);
                         targetPlane.Rotate(Math.PI / 2, insertVec);
-                        Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, targetPlane);
-                        doc.Objects.AddInstanceObject(orientBlock, xform);
 
-                    }
-                    
+                    Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, targetPlane);
+                    chainBlock = doc.Objects.AddInstanceObject(orientBlock, xform);
+                    chainBlocks.Add(chainBlock);
+
                 }
 
+                doc.Views.Redraw();
 
-
-
-
-                GetOption gd = new GetOption();
-                //gd.SetCommandPrompt("Distance");
-                var dis = new Rhino.Input.Custom.OptionDouble(chainDis);
-                gd.AddOptionDouble("distance", ref dis , "Distance in mm");
-                gd.AcceptNothing(true);
 
                 
-                var resdis = gd.Get();
-                if (resdis == GetResult.Nothing) break;
-
-                chainDis = dis.CurrentValue;
             }
 
 
