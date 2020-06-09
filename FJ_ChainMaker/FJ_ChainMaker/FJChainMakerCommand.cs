@@ -36,6 +36,9 @@ namespace FJ_ChainMaker
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
 
+            
+
+
             //Pick curve for chain
             GetObject getCurve = new GetObject();
             getCurve.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
@@ -53,13 +56,18 @@ namespace FJ_ChainMaker
             //Pick object for chain (instance)
             //pick objekt to orient
             GetObject go = new GetObject();
-            go.SetCommandPrompt("Select object to orient.");
+            go.SetCommandPrompt("Select chain element.");
             go.SubObjectSelect = true;
             go.DeselectAllBeforePostSelect = false;
-            go.GroupSelect = true;
-            go.GetMultiple(1, -1);
+            //go.GroupSelect = true;
+            //go.GetMultiple(1, -1);
+            go.Get();
             if (go.CommandResult() != Result.Success)
                 return go.CommandResult();
+            Rhino.DocObjects.ObjRef objref1 = go.Object(0);
+            Rhino.DocObjects.RhinoObject obj1 = objref1.Object();
+            GeometryBase obj1Base = obj1.Geometry;
+            
 
             int obCount = go.ObjectCount;
             string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
@@ -84,29 +92,13 @@ namespace FJ_ChainMaker
             sourcePlane = new Plane(pt1, vt1);
             Plane originPlane = new Plane(Point3d.Origin, vt1);
             Transform bform = Rhino.Geometry.Transform.PlaneToPlane(sourcePlane, originPlane);
-            //block instance
-            GeometryBase[] obj1List = new GeometryBase[obCount];
-            List<Brep> opList = new List<Brep>();
 
-            for (int igo = 0; igo < obCount; igo++)
-            {
-                Rhino.DocObjects.ObjRef objref1 = go.Object(igo);
-                Rhino.DocObjects.RhinoObject obj1 = objref1.Object();
-                if (obj == null)
-                    return Result.Failure;
-                obj.Select(false);
-
-
-                Rhino.Geometry.Brep opItem = objref1.Brep();
-                opList.Add(opItem);
-
-                GeometryBase obj1Base = obj1.Geometry;
-                obj1Base.Transform(bform);
-
-                obj1List[igo] = obj1Base;
-            }
-
+            obj1Base.Transform(bform);
+            
+            GeometryBase[] obj1List = new GeometryBase[1] {obj1Base};
+            
             var orientBlock = doc.InstanceDefinitions.Add("Block" + instDefCount, "OrientBlock", Point3d.Origin, obj1List);
+            
 
             //orient instances along curve
             
@@ -115,20 +107,6 @@ namespace FJ_ChainMaker
 
             while (true)
             {
-                
-
-                GetOption gd = new GetOption();
-                gd.SetCommandPrompt("Distance between element centers");
-                var dis = new Rhino.Input.Custom.OptionDouble(chainDis);
-                gd.AddOptionDouble("distance", ref dis);
-                gd.AcceptNothing(true);
-
-
-                var resdis = gd.Get();
-                if (resdis == GetResult.Nothing) break;
-
-                chainDis = dis.CurrentValue;
-
 
                 foreach (var block in chainBlocks)
                 {
@@ -142,11 +120,19 @@ namespace FJ_ChainMaker
                 for (int ic = 0; ic < curveDivideInt; ic++)
                 {
                     Point3d insertPoint = curve.PointAtLength(chainDis * ic);
-                    Vector3d insertVec = curve.PointAtLength(chainDis * ic+1) - insertPoint;
+                    Vector3d insertVec = curve.PointAtLength(chainDis * ic + 1) - curve.PointAtLength(chainDis * ic - 1);
                     Plane targetPlane = new Plane(insertPoint, insertVec);
-                    if (ic % 2 == 0)
+
+                    var xvec = targetPlane.XAxis;
+                    if (xvec.Z != 0)
                         targetPlane.Rotate(Math.PI / 2, insertVec);
 
+                    var yvec = targetPlane.YAxis;
+                    if (yvec.Z < 0)
+                        targetPlane.Rotate(Math.PI, insertVec);
+
+                    if (ic % 2 == 0)
+                        targetPlane.Rotate(Math.PI / 2, insertVec);
                     Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, targetPlane);
                     chainBlock = doc.Objects.AddInstanceObject(orientBlock, xform);
                     chainBlocks.Add(chainBlock);
@@ -154,15 +140,23 @@ namespace FJ_ChainMaker
                 }
 
                 doc.Views.Redraw();
+                GetOption gd = new GetOption();
+                gd.SetCommandPrompt("Distance between element centers");
+                var dis = new Rhino.Input.Custom.OptionDouble(chainDis);
+                gd.AddOptionDouble("distance", ref dis);
+                gd.AcceptNothing(true);
+                var resdis = gd.Get();
+                if (resdis == GetResult.Nothing) break;
+
+                chainDis = dis.CurrentValue;
 
 
-                
             }
 
 
 
 
-            doc.Views.Redraw();
+            //doc.Views.Redraw();
             
 
             // ---
