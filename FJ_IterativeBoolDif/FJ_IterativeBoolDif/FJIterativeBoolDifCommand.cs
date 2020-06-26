@@ -5,6 +5,7 @@ using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
+using Rhino.UI;
 
 namespace FJ_IterativeBoolDif
 {
@@ -31,34 +32,46 @@ namespace FJ_IterativeBoolDif
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-
+            const Rhino.DocObjects.ObjectType geometryFilter = Rhino.DocObjects.ObjectType.Surface | Rhino.DocObjects.ObjectType.PolysrfFilter ;
             Rhino.DocObjects.ObjRef objref;
-            Result rc = Rhino.Input.RhinoGet.GetOneObject("Select polysurface to subtract from",
-                                                                false, Rhino.DocObjects.ObjectType.PolysrfFilter, out objref);
-            if (rc != Rhino.Commands.Result.Success || objref == null)
+            Result rc = Rhino.Input.RhinoGet.GetOneObject("Select polysurface or surface to subtract from",
+                                                                false, geometryFilter, out objref);
+            if (rc != Rhino.Commands.Result.Success)
                 return rc;
             if (objref == null)
                 return Rhino.Commands.Result.Failure;
 
             Rhino.Geometry.Brep brep = objref.Brep();
+            bool resIssolid = brep.IsSolid;
+            if (!resIssolid)
+            {
+                Dialogs.ShowMessage("Your polysurface or surface is not solid! Result might not be valid!", "Warning!");
+            }
+            
             Guid firstBrep = objref.ObjectId;
             doc.Objects.UnselectAll();
             Rhino.DocObjects.ObjRef[] objrefs;
-            Result rcd = Rhino.Input.RhinoGet.GetMultipleObjects("Select set of polysurfaces to subtract",
-              false, Rhino.DocObjects.ObjectType.PolysrfFilter, out objrefs);
+            Result rcd = Rhino.Input.RhinoGet.GetMultipleObjects("Select set of polysurfaces or surfaces to subtract",
+              false, geometryFilter, out objrefs);
             if (rcd != Rhino.Commands.Result.Success)
                 return rcd;
             if (objrefs == null || objrefs.Length < 1)
                 return Rhino.Commands.Result.Failure;
-
+            bool isSolid = true;
             List<Rhino.Geometry.Brep> breps = new List<Rhino.Geometry.Brep>();
             for (int i = 0; i < objrefs.Length; i++)
             {
                 Rhino.Geometry.Brep brepd = objrefs[i].Brep();
+                resIssolid = brepd.IsSolid;
+                if (!resIssolid)
+                    isSolid = false;
                 Guid secondBrep = objrefs[i].ObjectId;
                 if (brepd != null && firstBrep != secondBrep)
                     breps.Add(brepd);
             }
+            if (!isSolid)
+                Dialogs.ShowMessage("At least on polysurface or surface to subtract is not solid! Result might not be valid!", "Warning!");
+
             doc.Objects.UnselectAll();
             string name_fail_layer = "FJ Boolean Fails";
             Rhino.DocObjects.Layer boolFail = new Rhino.DocObjects.Layer();

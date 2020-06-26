@@ -70,6 +70,7 @@ namespace FJ_PaveSet
         double diamStone = 1.0;
         double offSetStone = 0.1;
         bool optionBool = false;
+        bool moveBool = false;
         Surface surface;
 
 
@@ -112,10 +113,12 @@ namespace FJ_PaveSet
                 var stoneDiam = new Rhino.Input.Custom.OptionDouble(diamStone);
                 var stoneOff = new Rhino.Input.Custom.OptionDouble(offSetStone);
                 var boolOption = new Rhino.Input.Custom.OptionToggle(false, "Off", "On");
+                var moveOption = new Rhino.Input.Custom.OptionToggle(false, "Off", "On");
 
                 getPointAction.AddOptionDouble("StoneDiam", ref stoneDiam);
                 getPointAction.AddOptionDouble("Offset", ref stoneOff);
                 getPointAction.AddOptionToggle("Delete", ref boolOption);
+                getPointAction.AddOptionToggle("Move", ref moveOption);
                 getPointAction.DynamicDraw += RefCircleDraw;
                 getPointAction.Tag = obj;
                 getPointAction.AcceptString(true);
@@ -128,7 +131,26 @@ namespace FJ_PaveSet
                 diamStone = stoneDiam.CurrentValue;
                 offSetStone = stoneOff.CurrentValue;
                 optionBool = boolOption.CurrentValue;
+                moveBool = moveOption.CurrentValue;
 
+                if (moveBool == true)
+                {
+                    GetObject gcd = new Rhino.Input.Custom.GetObject();
+                    gcd.SetCommandPrompt("Select circle to move.");
+                    gcd.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+                    gcd.SubObjectSelect = false;
+                    gcd.DeselectAllBeforePostSelect = true;
+                    gcd.Get();
+                    Rhino.DocObjects.ObjRef delobjref = gcd.Object(0);
+                    Rhino.DocObjects.RhinoObject delobj = delobjref.Object();
+                    Curve curveRadius = delobjref.Curve();
+                    Circle circleRadius = new Circle();
+                    curveRadius.TryGetCircle(out circleRadius, tolerance);
+                    diamStone = circleRadius.Diameter;
+                    doc.Objects.Delete(delobj, true);
+                    doc.Views.Redraw();
+                    moveBool = false;
+                }
                 if (optionBool == true)
                 {
                     while (true)

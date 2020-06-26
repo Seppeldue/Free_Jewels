@@ -5,6 +5,8 @@ using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
+using Rhino.Render;
+using Rhino.DocObjects;
 
 namespace FJ_PaveStone
 {
@@ -29,6 +31,18 @@ namespace FJ_PaveStone
             get { return "FJ_PaveStone"; }
         }
 
+        RenderMaterial FindMaterial(RhinoDoc doc, string name)
+        {
+            foreach (var material in doc.RenderMaterials)
+            {
+                if (material.Name == name)
+                {
+                    return material;
+                }
+            }
+
+            return null;
+        }
 
         List<Guid> ids = new List<Guid>();
 
@@ -60,6 +74,27 @@ namespace FJ_PaveStone
 
                 icur.Add(refcr);
             }
+            var rm = FindMaterial(doc, "Diamond");
+            if (null == rm)
+            {
+                //Didn't find the material - create one and carry on.
+
+                //Create a basic material
+                var custom = new Rhino.DocObjects.Material();
+                custom.Reflectivity = 1;
+                custom.SetEnvironmentTexture(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/Free Jewels Rhino Plug-Ins/Dia3.jpg");
+                custom.CommitChanges();
+
+                rm = RenderMaterial.CreateBasicMaterial(custom);
+
+                var docMats = doc.RenderMaterials;
+
+                //docMats.BeginChange(RenderContent.ChangeContexts.Program);
+                docMats.Add(rm);
+                //docMats.EndChange();
+            }
+
+
 
             // Create Stone Mesh
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
@@ -154,11 +189,22 @@ namespace FJ_PaveStone
             meshAll.Compact();
             meshAll.Weld(0.001);
 
-            //Make InstanceDefinition from stone mesh
-            string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
-            Mesh[] meshArray = new Mesh[1] { meshAll };
-            var stoneIndex = doc.InstanceDefinitions.Add("Stone" + instDefCount, "StoneMesh 1mm", Point3d.Origin, meshArray);
+            //Get object Guid to apply render material
+            var meshGuid = doc.Objects.AddMesh(meshAll);
+            ObjRef objre = new ObjRef(meshGuid);
+            RhinoObject obje = objre.Object();
+            obje.RenderMaterial = rm;
+            obje.CommitChanges();
 
+            //Make InstanceDefinition
+            string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
+
+            var geometry = new System.Collections.Generic.List<Rhino.Geometry.GeometryBase>() { obje.Geometry };
+            var attributes = new System.Collections.Generic.List<Rhino.DocObjects.ObjectAttributes>() { obje.Attributes };
+            
+
+            var stoneIndex = doc.InstanceDefinitions.Add("Stone" + instDefCount, "StoneMesh 1mm", Point3d.Origin, geometry, attributes);
+            
             List<InstanceReferenceGeometry> meshPave = new List<InstanceReferenceGeometry>();
 
 
@@ -179,10 +225,11 @@ namespace FJ_PaveStone
                 var stoneA = doc.Objects.AddInstanceObject(stoneIndex, transform1);
                 var stoneB = doc.Objects.Transform(stoneA, transform2, true);
                 var stoneC = doc.Objects.Transform(stoneB, transform3, true);
-
+                
                 ids.Add(stoneC);
             }
             doc.Groups.Add(ids);
+            doc.Objects.Delete(obje);
             doc.Views.Redraw();
 
             return Result.Success;

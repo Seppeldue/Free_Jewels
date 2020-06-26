@@ -32,6 +32,8 @@ namespace FJ_ChainMaker
         Plane sourcePlane;
         Curve curve;
         double chainDis = 1.0;
+        int chainAxisOffset = 45;
+        double axisOffsetRadiant = 45 * (Math.PI/180);
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
@@ -133,6 +135,7 @@ namespace FJ_ChainMaker
 
                     if (ic % 2 == 0)
                         targetPlane.Rotate(Math.PI / 2, insertVec);
+                    targetPlane.Rotate(axisOffsetRadiant, insertVec);
                     Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, targetPlane);
                     chainBlock = doc.Objects.AddInstanceObject(orientBlock, xform);
                     chainBlocks.Add(chainBlock);
@@ -141,25 +144,23 @@ namespace FJ_ChainMaker
 
                 doc.Views.Redraw();
                 GetOption gd = new GetOption();
-                gd.SetCommandPrompt("Distance between element centers");
+                gd.SetCommandPrompt("Set distance between element centers in mm and rotation offset in degree. Press enter to accept.");
                 var dis = new Rhino.Input.Custom.OptionDouble(chainDis);
+                var axisOffset = new Rhino.Input.Custom.OptionInteger(chainAxisOffset);
                 gd.AddOptionDouble("distance", ref dis);
+                gd.AddOptionInteger("rotation", ref axisOffset);
                 gd.AcceptNothing(true);
                 var resdis = gd.Get();
                 if (resdis == GetResult.Nothing) break;
 
                 chainDis = dis.CurrentValue;
+                chainAxisOffset = axisOffset.CurrentValue;
+                axisOffsetRadiant = chainAxisOffset * (Math.PI/180);
 
 
             }
 
-
-
-
-            //doc.Views.Redraw();
-            
-
-            // ---
+            int index = doc.Groups.Add(chainBlocks);
 
             return Result.Success;
         }
