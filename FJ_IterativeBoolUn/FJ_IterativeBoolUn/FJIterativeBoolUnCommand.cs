@@ -6,6 +6,7 @@ using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
 using Rhino.UI;
+using Rhino.DocObjects;
 
 namespace FJ_IterativeBoolUn
 {
@@ -50,43 +51,86 @@ namespace FJ_IterativeBoolUn
             Guid firstBrep = objref.ObjectId;
 
             doc.Objects.UnselectAll(true);
-            Rhino.DocObjects.ObjRef[] objrefs;
-            Result rcd = Rhino.Input.RhinoGet.GetMultipleObjects("Select rest of polysurfaces or surfaces to bool",
-              false, geometryFilter, out objrefs);
-            if (rcd != Rhino.Commands.Result.Success)
-                return rcd;
-            if (objrefs == null || objrefs.Length < 1)
-                return Rhino.Commands.Result.Failure;
+
+
+            //Select rest of polysurfaces or surfaces to bool
+            Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
+            go.SetCommandPrompt("Select rest of polysurfaces or surfaces to bool");
+            go.GeometryFilter = geometryFilter | Rhino.DocObjects.ObjectType.InstanceReference;
+            go.GroupSelect = true;
+            go.GetMultiple(1, 0);
+
             bool isSolid = true;
+
+            //Add set to breps list
             List<Rhino.Geometry.Brep> breps = new List<Rhino.Geometry.Brep>();
-            for (int i = 0; i < objrefs.Length; i++)
+            for (int i = 0; i < go.ObjectCount; i++)
             {
-                Rhino.Geometry.Brep brepd = objrefs[i].Brep();
-                resIssolid = brepd.IsSolid;
-                if (!resIssolid)
-                    isSolid = false;
-                Guid secondBrep = objrefs[i].ObjectId;
-                if (brepd != null && firstBrep != secondBrep)
-                    breps.Add(brepd);
+
+                //Explode if instance object and add to breps list
+                if (go.Object(i).Object() is InstanceObject)
+                {
+                    InstanceObject instObj = go.Object(i).Object() as InstanceObject;
+                    RhinoObject[] explodedObjects;
+                    ObjectAttributes[] attributesOfExplodedObjects;
+                    Transform[] transformOfExplodedObjects;
+
+                    instObj.Explode(false, out explodedObjects, out attributesOfExplodedObjects, out transformOfExplodedObjects);
+                    Guid addedObjectID = doc.Objects.Add(explodedObjects[0].Geometry, explodedObjects[0].Attributes);
+
+                    ObjRef objrefs = new Rhino.DocObjects.ObjRef(addedObjectID);
+                    Rhino.Geometry.Brep brepd = objrefs.Brep();
+
+                    brepd.Transform(transformOfExplodedObjects[0]);
+
+                    resIssolid = brepd.IsSolid;
+                    if (!resIssolid)
+                        isSolid = false;
+                    if (brepd != null && firstBrep != addedObjectID)
+                        breps.Add(brepd);
+                    doc.Objects.Delete(addedObjectID, true);
+                }
+                else
+                {
+                    Rhino.DocObjects.ObjRef objrefs = go.Object(i);
+                    Rhino.Geometry.Brep brepd = objrefs.Brep();
+                    resIssolid = brepd.IsSolid;
+                    if (!resIssolid)
+                        isSolid = false;
+                    if (brepd != null && firstBrep != objrefs.ObjectId)
+                        breps.Add(brepd);
+                }
+
             }
             if (!isSolid)
                 Dialogs.ShowMessage("At least on polysurface or surface to subtract is not solid! Result might not be valid!", "Warning!");
 
             doc.Objects.UnselectAll(true);
-            string name_fail_layer = "FJ Boolean Fails";
-            Rhino.DocObjects.Layer boolFail = new Rhino.DocObjects.Layer();
-            boolFail.Name = name_fail_layer;
-            boolFail.Color = System.Drawing.Color.Red;
-            doc.Layers.Add(boolFail);
-            var fail_layer_index = doc.Layers.FindName(name_fail_layer);
 
-            string name_done_layer = "FJ Boolean Done";
-            Rhino.DocObjects.Layer boolDone = new Rhino.DocObjects.Layer();
-            boolDone.Name = name_done_layer;
-            boolDone.Color = System.Drawing.Color.BlueViolet;
-            doc.Layers.Add(boolDone);
-            var done_layer_index = doc.Layers.FindName(name_done_layer);
+            //Create layers for failed and successfull booleans if not already existing
+            var fail_layer_index = doc.Layers.FindName("FJ Boolean Fails");
+            if (fail_layer_index == null)
+            {
+                string name_fail_layer = "FJ Boolean Fails";
+                Rhino.DocObjects.Layer boolFail = new Rhino.DocObjects.Layer();
+                boolFail.Name = name_fail_layer;
+                boolFail.Color = System.Drawing.Color.Red;
+                doc.Layers.Add(boolFail);
+                fail_layer_index = doc.Layers.FindName(name_fail_layer);
+            }
 
+            var done_layer_index = doc.Layers.FindName("FJ Boolean Done");
+            if (done_layer_index == null)
+            {
+                string name_done_layer = "FJ Boolean Done";
+                Rhino.DocObjects.Layer boolDone = new Rhino.DocObjects.Layer();
+                boolDone.Name = name_done_layer;
+                boolDone.Color = System.Drawing.Color.BlueViolet;
+                doc.Layers.Add(boolDone);
+                done_layer_index = doc.Layers.FindName(name_done_layer);
+            }
+
+            //Compute boolean union
             double tolerance = doc.ModelAbsoluteTolerance;
             int a = 0;
             for (int i = 0; i < breps.Count; i++)
@@ -101,17 +145,26 @@ namespace FJ_IterativeBoolUn
                 if (brepBoolNew == null || brepBoolNew.Length > 1)
                 {
                     a++;
-                    Rhino.DocObjects.RhinoObject objFail = objrefs[i].Object();
+                    doc.Objects.Delete(go.Object(i).Object());
+
+                    var boolresultfail = doc.Objects.AddBrep(breps[i]);
+                    ObjRef objFailref = new ObjRef(boolresultfail);
+                    Rhino.DocObjects.RhinoObject objFail = objFailref.Object();
                     objFail.Attributes.LayerIndex = fail_layer_index.Index;
                     objFail.CommitChanges();
+                    
                 }
                 else
                 {
                     brep = brepBoolNew[0];
-                    Rhino.DocObjects.RhinoObject obj2Org = objrefs[i].Object();
+                    doc.Objects.Delete(go.Object(i).Object());
+
+                    var boolresult = doc.Objects.AddBrep(breps[i]);
+                    ObjRef obj20ref = new ObjRef(boolresult);
+                    Rhino.DocObjects.RhinoObject obj2Org = obj20ref.Object();
                     obj2Org.Attributes.LayerIndex = done_layer_index.Index;
                     obj2Org.CommitChanges();
-                    //doc.Objects.Delete(obj2Org);
+
                 }
 
                 doc.Views.Redraw();

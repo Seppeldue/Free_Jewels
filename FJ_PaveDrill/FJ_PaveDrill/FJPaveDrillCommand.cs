@@ -81,6 +81,68 @@ namespace FJ_PaveDrill
                 m_escape_key_pressed = false;
                 RhinoApp.EscapeKeyPressed += RhinoApp_EscapeKeyPressed;
 
+
+                List<Curve> curveDrill = new List<Curve>();
+
+                Point3d centerTop = new Point3d(0, 0, (headDrill + topDrill) * drillScale);
+                Circle circleTop = new Circle(centerTop, ancheadDrill / 2 * drillScale);
+                Curve curveTop = circleTop.ToNurbsCurve();
+                curveDrill.Add(curveTop);
+                Point3d centerMid = new Point3d(0, 0, topDrill * drillScale);
+                Circle circleMid = new Circle(centerMid, drillScale / 2);
+                Curve curveMid = circleMid.ToNurbsCurve();
+                curveDrill.Add(curveMid);
+                Circle circleBase = new Circle(drillScale / 2);
+                Curve curveBase = circleBase.ToNurbsCurve();
+                curveDrill.Add(curveBase);
+                Point3d centerLow = new Point3d(0, 0, -midDrill * drillScale);
+                Circle circleLow = new Circle(centerLow, ancDrill / 2 * drillScale);
+                Curve curveLow = circleLow.ToNurbsCurve();
+                curveDrill.Add(curveLow);
+                if (bottDrill != 0)
+                {
+                    Point3d centerBot = new Point3d(0, 0, (-midDrill - bottDrill) * drillScale);
+                    Circle circleBot = new Circle(centerBot, ancDrill / 2 * drillScale);
+                    Curve curveBot = circleBot.ToNurbsCurve();
+                    curveDrill.Add(curveBot);
+                }
+                
+
+                Brep[] cylBrep1 = Brep.CreateFromLoft(curveDrill, Point3d.Unset, Point3d.Unset, LoftType.Straight, false);
+                Brep[] cylBrep2 = Brep.CreateBooleanUnion(cylBrep1, tolerance);
+                Brep cylBrepFinal = cylBrep1[0];
+                cylBrepFinal = cylBrepFinal.CapPlanarHoles(tolerance);
+
+
+                string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
+                Brep[] brepArray = new Brep[1] { cylBrepFinal };
+                var drillIndex = doc.InstanceDefinitions.Add("Drill" + instDefCount, "RefDrill 1mm", Point3d.Origin, brepArray);
+
+                foreach (Curve c in icur)
+                {
+                    Circle circleDrill = new Circle();
+                    c.TryGetCircle(out circleDrill, tolerance);
+                    
+                    double radiusDrill = circleDrill.Diameter;
+                    Point3d center = circleDrill.Center;
+                    Vector3d moveV = new Vector3d(center);
+                    Vector3d zaxis = new Vector3d(0.0, 0.0, 1.0);
+                    Plane planeOr = new Plane(center, zaxis);
+                    Plane planeNew = circleDrill.Plane;
+                    var transform1 = Transform.Translation(moveV);
+                    var transform2 = Transform.Scale(center, radiusDrill);
+                    var transform3 = Transform.PlaneToPlane(planeOr, planeNew);
+
+                    var stoneA = doc.Objects.AddInstanceObject(drillIndex, transform1);
+                    var stoneB = doc.Objects.Transform(stoneA, transform2, true);
+                    var stoneC = doc.Objects.Transform(stoneB, transform3, true);
+
+                    ids.Add(stoneC);
+
+                    doc.Views.Redraw();
+                }
+
+
                 GetOption go = new Rhino.Input.Custom.GetOption();
                 go.SetCommandPrompt("Set drill parameters.");
                 go.AcceptNothing(true);
@@ -105,7 +167,7 @@ namespace FJ_PaveDrill
 
                 if (m_escape_key_pressed) break;
 
-                doc.Objects.Delete(ids, true);
+                
 
                 topDrill = drillTop.CurrentValue;
                 midDrill = drillMid.CurrentValue;
@@ -115,61 +177,11 @@ namespace FJ_PaveDrill
                 headDrill = drillHead.CurrentValue;
                 ancheadDrill = drillAncHead.CurrentValue;
 
-                List<Curve> curveDrill = new List<Curve>();
 
-                Point3d centerTop = new Point3d(0, 0, (headDrill + topDrill) * drillScale);
-                Circle circleTop = new Circle(centerTop, ancheadDrill / 2 * drillScale);
-                Curve curveTop = circleTop.ToNurbsCurve();
-                curveDrill.Add(curveTop);
-                Point3d centerMid = new Point3d(0, 0, topDrill * drillScale);
-                Circle circleMid = new Circle(centerMid, drillScale / 2);
-                Curve curveMid = circleMid.ToNurbsCurve();
-                curveDrill.Add(curveMid);
-                Circle circleBase = new Circle(drillScale / 2);
-                Curve curveBase = circleBase.ToNurbsCurve();
-                curveDrill.Add(curveBase);
-                Point3d centerLow = new Point3d(0, 0, -midDrill * drillScale);
-                Circle circleLow = new Circle(centerLow, ancDrill / 2 * drillScale);
-                Curve curveLow = circleLow.ToNurbsCurve();
-                curveDrill.Add(curveLow);
-                Point3d centerBot = new Point3d(0, 0, -bottDrill * drillScale);
-                Circle circleBot = new Circle(centerBot, ancDrill / 2 * drillScale);
-                Curve curveBot = circleBot.ToNurbsCurve();
-                curveDrill.Add(curveBot);
-
-                Brep[] cylBrep1 = Brep.CreateFromLoft(curveDrill, Point3d.Unset, Point3d.Unset, LoftType.Straight, false);
-                Brep[] cylBrep2 = Brep.CreateBooleanUnion(cylBrep1, tolerance);
-                Brep cylBrepFinal = cylBrep1[0];
-                cylBrepFinal = cylBrepFinal.CapPlanarHoles(tolerance);
-
-
-                string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
-                Brep[] brepArray = new Brep[1] { cylBrepFinal };
-                var drillIndex = doc.InstanceDefinitions.Add("Drill" + instDefCount, "RefDrill 1mm", Point3d.Origin, brepArray);
-
-                foreach (Curve c in icur)
-                {
-                    Circle circleDrill = new Circle();
-                    c.TryGetCircle(out circleDrill, tolerance);
-                    double radiusDrill = circleDrill.Diameter;
-                    Point3d center = circleDrill.Center;
-                    Vector3d moveV = new Vector3d(center);
-                    Vector3d zaxis = new Vector3d(0.0, 0.0, 1.0);
-                    Plane planeOr = new Plane(center, zaxis);
-                    Plane planeNew = circleDrill.Plane;
-                    var transform1 = Transform.Translation(moveV);
-                    var transform2 = Transform.Scale(center, radiusDrill);
-                    var transform3 = Transform.PlaneToPlane(planeOr, planeNew);
-
-                    var stoneA = doc.Objects.AddInstanceObject(drillIndex, transform1);
-                    var stoneB = doc.Objects.Transform(stoneA, transform2, true);
-                    var stoneC = doc.Objects.Transform(stoneB, transform3, true);
-
-                    ids.Add(stoneC);
-
-                    doc.Views.Redraw();
-                }
                 if (res == GetResult.Nothing) break;
+
+                doc.Objects.Delete(ids, true);
+
             }
             RhinoApp.EscapeKeyPressed -= RhinoApp_EscapeKeyPressed;
 
