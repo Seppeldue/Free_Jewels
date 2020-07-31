@@ -72,23 +72,21 @@ namespace FJ_IterativeOffset
 
             for (int i = 0; i < go.ObjectCount; i++)
             {
-                BoundingBox bbObj = go.Object(i).Geometry().GetBoundingBox(true);
-                Point3d bbObjCenter = bbObj.Center;
-
-
+                
                 Rhino.DocObjects.ObjRef objref = go.Object(i);
                 var curve = objref.Curve();
                 if (curve == null)
                     return Result.Nothing;
-
-                curve.DivideByCount(3, true, out Point3d[] curvePoints);
-                Plane plane = new Plane(curvePoints[0], curvePoints[1], curvePoints[2]);
-                //var planeResult = plane.FitPlaneToPoints(IEnumerable < Point3d > curvePoints, out Plane curvePlane);
-                Vector3d curveNormal = plane.Normal;
+                Plane plane;
+                if (!curve.TryGetPlane(out plane))
+                {
+                    curve.DivideByCount(3, true, out Point3d[] curvePoints);
+                    plane = new Plane(curvePoints[0], curvePoints[1], curvePoints[2]);
+                }
 
                 try
                 {
-                    var curves = curve.Offset(bbObjCenter, curveNormal, -distVal, doc.ModelAbsoluteTolerance, cornerStyle[cornerIndex]);
+                    var curves = curve.Offset(plane, distVal, doc.ModelAbsoluteTolerance, cornerStyle[cornerIndex]);
                     foreach (var offsetcurve in curves)
                         doc.Objects.AddCurve(offsetcurve);
                 }
