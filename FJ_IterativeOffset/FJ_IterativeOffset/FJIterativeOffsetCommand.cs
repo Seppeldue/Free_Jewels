@@ -29,22 +29,15 @@ namespace FJ_IterativeOffset
             get { return "FJ_IterativeOffset"; }
         }
         double distVal = 1.0;
-        bool direction = true;
         int cornerIndex = 1;
         CurveOffsetCornerStyle[] cornerStyle = {CurveOffsetCornerStyle.None, CurveOffsetCornerStyle.Sharp, CurveOffsetCornerStyle.Round, CurveOffsetCornerStyle.Smooth, CurveOffsetCornerStyle.Chamfer };
         List<String> corners = new List<string>{"None", "Sharp", "Round", "Smooth", "Chamfer"};
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-            
+            int counter = 0;
 
             GetObject go = new GetObject();
             go.SetCommandPrompt("Select curves to offset.");
-            var dist = new Rhino.Input.Custom.OptionDouble(distVal);
-            go.AddOptionDouble("Distance", ref dist);
-            //var dir = new Rhino.Input.Custom.OptionToggle(true, "Out", "In");
-            //go.AddOptionToggle("Direction", ref dir);
-            
-            go.AddOptionList("CornerStyle", corners, cornerIndex);
             go.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
             go.GroupSelect = true;
             go.SubObjectSelect = true;
@@ -52,32 +45,63 @@ namespace FJ_IterativeOffset
             go.OneByOnePostSelect = false;
             go.GetMultiple(1, 0);
 
+
+            GetOption gop = new GetOption();
+            var dist = new Rhino.Input.Custom.OptionDouble(distVal);
+            gop.SetCommandPrompt("Set values. Press enter when done.");
+            gop.AddOptionDouble("Distance", ref dist);
+            int optList = gop.AddOptionList("CornerStyle", corners, cornerIndex);
+            gop.AcceptNothing(true);
+
+            while (true)
+            {
+
+                if (gop.Get() == GetResult.Nothing)
+                    break;
+
+                else if (gop.OptionIndex() == optList)
+                    cornerIndex = gop.Option().CurrentListOptionIndex;
+
+                else 
+                    distVal = dist.CurrentValue;
+ 
+            }
+
+
+            
+
             for (int i = 0; i < go.ObjectCount; i++)
             {
                 BoundingBox bbObj = go.Object(i).Geometry().GetBoundingBox(true);
                 Point3d bbObjCenter = bbObj.Center;
-                
-                
+
+
                 Rhino.DocObjects.ObjRef objref = go.Object(i);
                 var curve = objref.Curve();
                 if (curve == null)
                     return Result.Nothing;
 
-                curve.DivideByCount(3,true,out Point3d[] curvePoints);
+                curve.DivideByCount(3, true, out Point3d[] curvePoints);
                 Plane plane = new Plane(curvePoints[0], curvePoints[1], curvePoints[2]);
                 //var planeResult = plane.FitPlaneToPoints(IEnumerable < Point3d > curvePoints, out Plane curvePlane);
                 Vector3d curveNormal = plane.Normal;
-                distVal = dist.CurrentValue;
-                cornerIndex = go.Option().CurrentListOptionIndex;
-                //direction = dir.CurrentValue;
 
-                var curves = curve.Offset(bbObjCenter, curveNormal, -distVal, doc.ModelAbsoluteTolerance, cornerStyle[cornerIndex]);
+                try
+                {
+                    var curves = curve.Offset(bbObjCenter, curveNormal, -distVal, doc.ModelAbsoluteTolerance, cornerStyle[cornerIndex]);
+                    foreach (var offsetcurve in curves)
+                        doc.Objects.AddCurve(offsetcurve);
+                }
+                catch
+                {
+                    counter++;
+                }
 
-                foreach (var offsetcurve in curves)
-                    doc.Objects.AddCurve(offsetcurve);
-        }
+            }
 
-            
+            if (counter > 0)
+                RhinoApp.WriteLine(counter+" out of "+go.ObjectCount+" offset values were out of scope!");
+
             doc.Views.Redraw();
             
 
