@@ -31,6 +31,14 @@ namespace FJ_CenterPoint
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
+
+            var layerCheck = doc.Layers.FindName("CenterPoints");
+            if (layerCheck == null)
+            {
+                doc.Layers.Add("CenterPoints", System.Drawing.Color.Blue);
+                layerCheck = doc.Layers.FindName("CenterPoints");
+            }
+
             //pick objects to add center point
             Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
             go.SetCommandPrompt("Select objects to add center point");
@@ -45,7 +53,7 @@ namespace FJ_CenterPoint
             
             for (int i = 0; i < go.ObjectCount; i++)
             {
-                
+                Guid pointG;
                 Rhino.DocObjects.ObjRef objref = go.Object(i);
                 Rhino.DocObjects.RhinoObject obj = objref.Object();
                 var objType = obj.ObjectType;
@@ -57,24 +65,26 @@ namespace FJ_CenterPoint
                     {
                         BoundingBox bbObj = go.Object(i).Geometry().GetBoundingBox(true);
                         Point3d bbObjCenter = bbObj.Center;
-                        doc.Objects.AddPoint(bbObjCenter);
+                        pointG = doc.Objects.AddPoint(bbObjCenter);
                     }
                     else
                     {
                         Point3d circleCenter = circle.Center;
-                        doc.Objects.AddPoint(circleCenter);
+                        pointG = doc.Objects.AddPoint(circleCenter);
                     }
                 }
                 else
                 {
                     BoundingBox bbObj = go.Object(i).Geometry().GetBoundingBox(true);
                     Point3d bbObjCenter = bbObj.Center;
-                    doc.Objects.AddPoint(bbObjCenter);
+                    pointG = doc.Objects.AddPoint(bbObjCenter);
 
                 }
-
+                Rhino.DocObjects.RhinoObject circObj = doc.Objects.Find(pointG);
+                circObj.Attributes.LayerIndex = layerCheck.Index;
+                circObj.CommitChanges();
             }
-
+            doc.Views.Redraw();
             return Result.Success;
         }
     }
