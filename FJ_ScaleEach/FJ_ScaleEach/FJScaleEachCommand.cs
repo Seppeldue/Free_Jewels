@@ -6,11 +6,11 @@ using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
 
-namespace FJ_Expand
+namespace FJ_ScaleEach
 {
-    public class FJExpandCommand : Command
+    public class FJScaleEachCommand : Command
     {
-        public FJExpandCommand()
+        public FJScaleEachCommand()
         {
             // Rhino only creates one instance of each command class defined in a
             // plug-in, so it is safe to store a refence in a static property.
@@ -18,7 +18,7 @@ namespace FJ_Expand
         }
 
         ///<summary>The only instance of this command.</summary>
-        public static FJExpandCommand Instance
+        public static FJScaleEachCommand Instance
         {
             get; private set;
         }
@@ -26,21 +26,21 @@ namespace FJ_Expand
         ///<returns>The command name as it appears on the Rhino command line.</returns>
         public override string EnglishName
         {
-            get { return "FJ_Expand"; }
+            get { return "FJ_ScaleEach"; }
         }
 
         //Dynamic Object Draw
         void RefObjDraw(object sender, Rhino.Input.Custom.GetPointDrawEventArgs e)
         {
             double factorTemp = (scaleCenter.DistanceTo(e.CurrentPoint)) / (scaleCenter.DistanceTo(scaleRefPoint));
+            
 
             if (dimensionIndex == 0)
             {
                 for (int i = 0; i < goList.Count; i++)
                 {
-                    Rhino.Geometry.Vector3d vec = (centers[i] - scaleCenter) * (factorTemp - 1);
                     Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
-                    var xform = Rhino.Geometry.Transform.Translation(vec);
+                    var xform = Transform.Scale(centers[i], factorTemp);
                     e.Display.DrawObject(rhobj, xform);
                 }
             }
@@ -49,16 +49,9 @@ namespace FJ_Expand
             {
                 for (int i = 0; i < goList.Count; i++)
                 {
-                    Rhino.Geometry.Vector3d vec = (centers[i] - scaleCenter) * (factorTemp - 1);
                     Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
-                    Vector3d planeNormal = plane2D.Normal;
-                    if (planeNormal[0] != 0)
-                        vec.X = 0;
-                    else if (planeNormal[1] != 0)
-                        vec.Y = 0;
-                    else if (planeNormal[2] != 0)
-                        vec.Z = 0;
-                    var xform = Rhino.Geometry.Transform.Translation(vec);
+                    plane2D.Origin = centers[i];
+                    var xform = Rhino.Geometry.Transform.Scale(plane2D, factorTemp, factorTemp, 1);
                     e.Display.DrawObject(rhobj, xform);
                 }
             }
@@ -67,15 +60,9 @@ namespace FJ_Expand
             {
                 for (int i = 0; i < goList.Count; i++)
                 {
-                    Vector3d vecEach = (centers[i] - scaleCenter);
-                    double vecEachLength = vecEach.Length * (factorTemp - 1);
                     Vector3d vec = (scaleRefPoint - scaleCenter);
-                    double angleVec = Vector3d.VectorAngle(vecEach, vec);
-                    int pol = 1;
-                    if (angleVec > 1.57) pol = -1;
-                    vec.Unitize();
-                    vec = vec * vecEachLength * pol;
-                    var xform = Transform.Translation(vec);
+                    Plane scalePlane = new Plane(centers[i], vec);
+                    var xform = Transform.Scale(scalePlane, 1, 1, factorTemp);
                     Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
                     e.Display.DrawObject(rhobj, xform);
                 }
@@ -96,9 +83,10 @@ namespace FJ_Expand
         {
 
 
+
             //pick objects to expand
             Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
-            go.SetCommandPrompt("Select objects to expand");
+            go.SetCommandPrompt("Select objects to scale");
             go.GroupSelect = true;
             go.SubObjectSelect = false;
             go.EnableClearObjectsOnEntry(false);
@@ -132,15 +120,17 @@ namespace FJ_Expand
             else
                 scaleCenter = gp.Point();
 
+            Rhino.Display.RhinoView view = gp.View();
+            plane2D = view.ActiveViewport.ConstructionPlane();
+
             //Expansion factor
             GetPoint gp2 = new GetPoint();
-            gp2.SetCommandPrompt("Expansion factor or first reference point <" + factor + ">");
+            gp2.SetCommandPrompt("Scale factor or first reference point <" + factor + ">");
             gp2.DrawLineFromPoint(scaleCenter, true);
             gp2.AcceptNumber(true, true);
             GetResult gr = gp2.Get();
+            
 
-            Rhino.Display.RhinoView view = gp2.View();
-            plane2D = view.ActiveViewport.ConstructionPlane();
 
             if (gr == GetResult.Number)
                 factor = gp2.Number();
@@ -169,6 +159,7 @@ namespace FJ_Expand
                     else if (res == GetResult.Point)
                     {
                         Point3d scaleRefPoint2 = gp3.Point();
+                        
                         factor = (scaleCenter.DistanceTo(scaleRefPoint2)) / (scaleCenter.DistanceTo(scaleRefPoint));
                         doc.Objects.Delete(tempLine, true);
                         doc.Objects.Delete(tempPoint, true);
@@ -176,7 +167,7 @@ namespace FJ_Expand
                     break;
                 }
             }
-            RhinoApp.WriteLine("Expantion factor: " + factor);
+            RhinoApp.WriteLine("Scale factor: " + factor);
 
             //Compute translation
 
@@ -185,8 +176,7 @@ namespace FJ_Expand
             {
                 for (int i = 0; i < go.ObjectCount; i++)
                 {
-                    Vector3d vec = (centers[i] - scaleCenter) * (factor - 1);
-                    var xform = Transform.Translation(vec);
+                    var xform = Transform.Scale(centers[i], factor);
                     doc.Objects.Transform(go.Object(i), xform, true);
                 }
             }
@@ -195,15 +185,8 @@ namespace FJ_Expand
             {
                 for (int i = 0; i < go.ObjectCount; i++)
                 {
-                    Rhino.Geometry.Vector3d vec = (centers[i] - scaleCenter) * (factor - 1);
-                    Vector3d planeNormal = plane2D.Normal;
-                    if (planeNormal[0] != 0)
-                        vec.X = 0;
-                    else if (planeNormal[1] != 0)
-                        vec.Y = 0;
-                    else if (planeNormal[2] != 0)
-                        vec.Z = 0;
-                    var xform = Rhino.Geometry.Transform.Translation(vec);
+                    plane2D.Origin = centers[i];
+                    var xform = Rhino.Geometry.Transform.Scale(plane2D, factor, factor, 1);
                     doc.Objects.Transform(go.Object(i), xform, true);
                 }
             }
@@ -212,16 +195,9 @@ namespace FJ_Expand
             {
                 for (int i = 0; i < go.ObjectCount; i++)
                 {
-                    Vector3d vecEach = (centers[i] - scaleCenter);
-                    double vecEachLength = vecEach.Length * (factor - 1);
                     Vector3d vec = (scaleRefPoint - scaleCenter);
-                    double angleVec = Vector3d.VectorAngle(vecEach, vec);
-                    int pol = 1;
-                    if (angleVec > 1.57) pol = -1;
-                    vec.Unitize();
-                    vec = vec * vecEachLength * pol;
-
-                    var xform = Transform.Translation(vec);
+                    Plane scalePlane = new Plane(centers[i], vec);
+                    var xform = Transform.Scale(scalePlane, 1, 1, factor);
                     doc.Objects.Transform(go.Object(i), xform, true);
                 }
             }

@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.779
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_ScaleEach", "FJ_ScaleEach\FJ_ScaleEach.csproj", "{141E0B15-480A-4B11-B696-4918E6FDA34B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{141E0B15-480A-4B11-B696-4918E6FDA34B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{141E0B15-480A-4B11-B696-4918E6FDA34B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{141E0B15-480A-4B11-B696-4918E6FDA34B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{141E0B15-480A-4B11-B696-4918E6FDA34B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3CD667CD-B53F-4B78-8A25-4A39688CF0F5}
+	EndGlobalSection
+EndGlobal
