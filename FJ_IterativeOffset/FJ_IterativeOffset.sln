@@ -5,16 +5,30 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_IterativeOffset", "FJ_IterativeOffset\FJ_IterativeOffset.csproj", "{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "IterativeOffset.Installer", "IterativeOffset.Installer\IterativeOffset.Installer.wixproj", "{FCDE4544-8BF4-4D1C-A946-444A7444E72E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Debug|x86.Build.0 = Debug|Any CPU
 		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Release|x86.ActiveCfg = Release|Any CPU
+		{9E1AC378-CDDF-4BF8-8EC7-0F13479FFD95}.Release|x86.Build.0 = Release|Any CPU
+		{FCDE4544-8BF4-4D1C-A946-444A7444E72E}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{FCDE4544-8BF4-4D1C-A946-444A7444E72E}.Debug|x86.ActiveCfg = Debug|x86
+		{FCDE4544-8BF4-4D1C-A946-444A7444E72E}.Debug|x86.Build.0 = Debug|x86
+		{FCDE4544-8BF4-4D1C-A946-444A7444E72E}.Release|Any CPU.ActiveCfg = Release|x86
+		{FCDE4544-8BF4-4D1C-A946-444A7444E72E}.Release|x86.ActiveCfg = Release|x86
+		{FCDE4544-8BF4-4D1C-A946-444A7444E72E}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

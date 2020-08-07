@@ -4,7 +4,7 @@
   <Product Id="*" 
            Name="Free Jewels" 
            Language="1033" 
-           Version="1.0.0.0" 
+           Version="1.0.0.1" 
            Manufacturer="Free Jewels" 
            UpgradeCode="d62c1559-b5a9-4c3f-9724-6860c498639f">
 		<Package InstallerVersion="200" 
@@ -54,6 +54,15 @@
       <!--  Dependencies -->
       <ComponentGroupRef Id="ProductComponents"/>
       <!-- Common plug-in -->
+      <Feature Id="FJ_CenterPoint" Title="CenterPoint.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="CenterPoint.Installer"/>
+      </Feature>
+      <Feature Id="FJ_ChainMaker" Title="ChainMaker.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="ChainMaker.Installer"/>
+      </Feature>
+      <Feature Id="FJ_CurveToCircle" Title="CurveToCircle.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="CurveToCircle.Installer"/>
+      </Feature>
       <Feature Id="FJ_Expand" Title="Expand.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="Expand.Installer"/>
       </Feature>
@@ -66,11 +75,17 @@
       <Feature Id="FJ_IterativeBoolUn" Title="IterativeBoolUn.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="IterativeBoolUn.Installer"/>
       </Feature>
+      <Feature Id="FJ_IterativeOffset" Title="IterativeOffset.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="IterativeOffset.Installer"/>
+      </Feature>
       <Feature Id="FJ_Mat" Title="Mat.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="Mat.Installer"/>
       </Feature>
       <Feature Id="FJ_MirrorCurve" Title="MirrorCurve.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="MirrorCurve.Installer"/>
+      </Feature>
+      <Feature Id="FJ_NumberObjects" Title="NumberObjects.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="NumberObjects.Installer"/>
       </Feature>
       <Feature Id="FJ_OrientObjOnSurface" Title="OrientObjOnSurface.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="OrientObjOnSurface.Installer"/>
@@ -87,6 +102,9 @@
       <Feature Id="FJ_Report" Title="Report.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="Report.Installer"/>
       </Feature>
+      <Feature Id="FJ_ScaleEach" Title="ScaleEach.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="ScaleEach.Installer"/>
+      </Feature>
       <Feature Id="FJ_FreeJewelsToolbar" Title="FreeJewelsToolbar.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="FreeJewelsToolbar.Installer"/>
       </Feature>
@@ -95,6 +113,24 @@
 
   <!-- This is where the merge modules are referenced. Each plug-in creates a merge module -->
   <Fragment Id="FRG_Merge">
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="CenterPoint.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_CenterPoint\CenterPoint.Installer\bin\Debug\CenterPoint.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="ChainMaker.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_ChainMaker\ChainMaker.Installer\bin\Debug\ChainMaker.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="CurveToCircle.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_CurveToCircle\CurveToCircle.Installer\bin\Debug\CurveToCircle.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
     <DirectoryRef Id="TARGETDIR" >
       <Merge Id="Expand.Installer"      
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Expand\Expand.Installer\bin\Debug\Expand.Installer.msm"       
@@ -120,6 +156,12 @@
              DiskId="1"/>
     </DirectoryRef>
     <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="IterativeOffset.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_IterativeOffset\IterativeOffset.Installer\bin\Debug\IterativeOffset.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
       <Merge Id="Mat.Installer"
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Mat\Mat.Installer\bin\Debug\Mat.Installer.msm"
              Language="1033"
@@ -128,6 +170,12 @@
     <DirectoryRef Id="TARGETDIR" >
       <Merge Id="MirrorCurve.Installer"
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_MirrorCurve\MirrorCurve.Installer\bin\Debug\MirrorCurve.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="NumberObjects.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_NumberObjects\NumberObjects.Installer\bin\Debug\NumberObjects.Installer.msm"
              Language="1033"
              DiskId="1"/>
     </DirectoryRef>
@@ -158,6 +206,12 @@
     <DirectoryRef Id="TARGETDIR" >
       <Merge Id="Report.Installer"
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Report\Report.Installer\bin\Debug\Report.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="ScaleEach.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_ScaleEach\ScaleEach.Installer\bin\Debug\ScaleEach.Installer.msm"
              Language="1033"
              DiskId="1"/>
     </DirectoryRef>

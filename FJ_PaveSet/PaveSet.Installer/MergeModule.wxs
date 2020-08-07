@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Module Id="PaveSet.Installer" Language="1033" Version="1.0.0.0">
+  <Module Id="PaveSet.Installer" Language="1033" Version="1.0.0.1">
     <Package Id="{72562D38-6271-49A9-9A33-E916BD25D271}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />

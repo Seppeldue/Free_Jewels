@@ -5,16 +5,30 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_CurveToCircle", "FJ_CurveToCircle\FJ_CurveToCircle.csproj", "{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "CurveToCircle.Installer", "CurveToCircle.Installer\CurveToCircle.Installer.wixproj", "{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Debug|x86.Build.0 = Debug|Any CPU
 		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Release|x86.ActiveCfg = Release|Any CPU
+		{9A0CB26A-3D68-4498-9CAD-5F12F47C749C}.Release|x86.Build.0 = Release|Any CPU
+		{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}.Debug|x86.ActiveCfg = Debug|x86
+		{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}.Debug|x86.Build.0 = Debug|x86
+		{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}.Release|Any CPU.ActiveCfg = Release|x86
+		{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}.Release|x86.ActiveCfg = Release|x86
+		{10ECFBAE-AD4C-4FF5-A2F4-FA0B6C6832FE}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

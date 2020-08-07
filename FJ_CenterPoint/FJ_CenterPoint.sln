@@ -5,16 +5,30 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FJ_CenterPoint", "FJ_CenterPoint\FJ_CenterPoint.csproj", "{12302EB9-5680-44B5-87C4-FFC95F3D15D8}"
 EndProject
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "CenterPoint.Installer", "CenterPoint.Installer\CenterPoint.Installer.wixproj", "{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Debug|x86.Build.0 = Debug|Any CPU
 		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{12302EB9-5680-44B5-87C4-FFC95F3D15D8}.Release|x86.Build.0 = Release|Any CPU
+		{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}.Debug|x86.ActiveCfg = Debug|x86
+		{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}.Debug|x86.Build.0 = Debug|x86
+		{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}.Release|Any CPU.ActiveCfg = Release|x86
+		{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}.Release|x86.ActiveCfg = Release|x86
+		{5D4DA81A-3379-4FBD-88E3-6C5F2A5B3F22}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

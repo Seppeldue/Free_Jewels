@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Module Id="OrientObjOnSurface.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{B263F95E-005D-43F2-BD65-8CBB9D049CA6}"
+  <Module Id="NumberObjects.Installer" Language="1033" Version="1.0.0.1">
+    <Package Id="{58F1BD5F-66FB-47FF-9668-058B05F92C64}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 
@@ -12,29 +12,30 @@
         <!-- Our directory is called MARIN Rhino Plug-Ins -->
         <Directory Id="PLUGINFOLDER" Name="Free Jewels Rhino Plug-Ins" >
           <!-- this defines the RHP file -->
-          <Component Id="FJ_OrientObjOnSurface" Guid="{536138DF-CD61-4F55-89FE-1BFF8026FD13}">
+          <Component Id="FJ_NumberObjects" Guid="{F29547C0-194F-4AA3-8067-2C6C473B24CA}">
             <!-- Install the plug-in from dev/bin/win64/Release to the plug-in folder-->
-            <File Id="FJ_OrientObjOnSurface" Name="FJ_OrientObjOnSurface.rhp" Source="C:/Users/SEB/source/Repos/Free_Jewels/Free_Jewels_Privat/FJ_OrientObjOnSurface/FJ_OrientObjOnSurface/bin/FJ_OrientObjOnSurface.rhp"/>
+            <File Id="FJ_NumberObjects" Name="FJ_NumberObjects.rhp" Source="C:/Users/SEB/source/Repos/Free_Jewels/Free_Jewels_Privat/FJ_NumberObjects/FJ_NumberObjects/bin/FJ_NumberObjects.rhp"/>
 
             <!-- this is required because we install in the user profile -->
             <RemoveFolder Id="remPLUGINFOLDER" Directory="PLUGINFOLDER" On="uninstall"/>
 
             <!-- this is required because we install in the user profile -->
             <RegistryKey Root="HKCU" Key="Software\Free Jewels\RhinoPlugIns">
-              <RegistryValue Name="FJ_OrientObjOnSurface" Value="1" KeyPath="yes" Type="integer"/>
+              <RegistryValue Name="FJ_NumberObjects" Value="1" KeyPath="yes" Type="integer"/>
             </RegistryKey>
 
             <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
-            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\4A1D8A77-BB9B-49C1-B758-C8AFD90EC725">
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\1a41348c-5630-4191-a06d-a24c6de22e32">
               <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
-              <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_OrientObjOnSurface.rhp" Type="string"/>
+              <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_NumberObjects.rhp" Type="string"/>
             </RegistryKey>
 
             <!-- when uninstalling, remove the registry entry for this plug-in -->
-            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\4A1D8A77-BB9B-49C1-B758-C8AFD90EC725" Action="removeOnUninstall" />
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\1a41348c-5630-4191-a06d-a24c6de22e32" Action="removeOnUninstall" />
           </Component>
         </Directory>
       </Directory>
     </Directory>
   </Module>
 </Wix>
+

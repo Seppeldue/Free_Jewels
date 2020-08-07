@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Module Id="MirrorCurve.Installer" Language="1033" Version="1.0.0.0">
+  <Module Id="MirrorCurve.Installer" Language="1033" Version="1.0.0.1">
     <Package Id="{D4A6F851-9133-444A-B7A7-E91F6D3441B8}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
