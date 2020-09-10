@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="PaveDrill.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{8553CC28-D4F5-4821-899A-25324FCA385D}"
+    <Package Id="{3CFCB708-A67E-4122-A268-F1BEF7BEA211}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

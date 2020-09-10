@@ -87,11 +87,11 @@ namespace FJ_ScaleEach
             //pick objects to expand
             Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
             go.SetCommandPrompt("Select objects to scale");
-            go.GroupSelect = true;
-            go.SubObjectSelect = false;
-            go.EnableClearObjectsOnEntry(false);
-            go.EnableUnselectObjectsOnExit(false);
-            go.DeselectAllBeforePostSelect = false;
+            //go.GroupSelect = true;
+            go.SubObjectSelect = true;
+            //go.EnableClearObjectsOnEntry(false);
+            //go.EnableUnselectObjectsOnExit(false);
+            //go.DeselectAllBeforePostSelect = false;
             go.GetMultiple(1, 0);
 
             //Compute center

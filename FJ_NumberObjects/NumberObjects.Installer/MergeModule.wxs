@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="NumberObjects.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{58F1BD5F-66FB-47FF-9668-058B05F92C64}"
+    <Package Id="{5951444E-9919-49A2-B354-D2AC6C9D1226}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

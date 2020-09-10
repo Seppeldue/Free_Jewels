@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="CurveToCircle.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{8E2B734B-389C-462D-AE62-93A5283106F1}"
+    <Package Id="{53ADF6F0-8214-4FF0-B7CC-382A98DCF079}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

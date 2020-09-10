@@ -14,13 +14,13 @@
              Description="Jewelry plugin for Rhino6"
              Languages="1033" />
 
-		<MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MajorUpgrade DowngradeErrorMessage="A newer version of Free Jewels is already installed." />
     
 		<MediaTemplate EmbedCab="yes"  />
 
     <!-- Define the Free Jewels icon to show in the Add/Remove Programs (ARP) dialog-->
-    <Icon Id="FreeJewels.ico" SourceFile="$(var.ProjectDir)\Assets\FreeJewelsIcon.ico"/>
-    <Property Id="ARPPRODUCTICON">FreeJewelsIcon.ico"</Property>
+    <Icon Id="icon.ico" SourceFile="$(var.ProjectDir)\Assets\FreeJewelsIcon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
     
     <!-- Create simple UI for the installer-->
     <UIRef Id="WixUI_Minimal"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="CenterPoint.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{DC94A3AF-1031-4B68-ADC6-8C5FD00ABECB}"
+    <Package Id="{D7B0AEC0-D326-4D6A-B1CD-8ECFC9324C09}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

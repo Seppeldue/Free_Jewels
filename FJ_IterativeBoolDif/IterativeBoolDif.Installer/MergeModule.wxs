@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="IterativeBoolDif.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{DF5E0950-C73A-4C29-A2FF-981A43EB1B7D}"
+    <Package Id="{D629D69C-2270-478D-A7B8-E5C13B57A8E6}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

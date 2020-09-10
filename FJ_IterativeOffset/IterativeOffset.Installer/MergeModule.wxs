@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="IterativeOffset.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{6855945C-8BA7-48D1-B270-05117CCADFDD}"
+    <Package Id="{27495CB7-BB02-4096-8468-4AAE029FBA52}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

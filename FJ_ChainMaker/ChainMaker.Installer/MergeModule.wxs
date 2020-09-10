@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="ChainMaker.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{121D64A3-1F93-4F54-AA79-CE073F5F583A}"
+    <Package Id="{E81F30D3-39F3-46FA-BC1A-6FF39972F7CA}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 

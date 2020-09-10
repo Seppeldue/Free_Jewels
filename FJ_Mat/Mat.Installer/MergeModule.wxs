@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Module Id="Mat.Installer" Language="1033" Version="1.0.0.1">
-    <Package Id="{28085DAD-4CDA-4D45-9182-349F6399684E}"
+    <Package Id="{D082A6EA-8DBB-479C-81C5-158E2B20359C}"
              Manufacturer="Free Jewels"
              InstallerVersion="200" />
 
+    <!-- Package Id="{28085DAD-4CDA-4D45-9182-349F6399684E} -->
+    
     <!-- This next bit defines the plug-in file and registry entry for Rhino -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <!-- We do a per-user installation to the Roaming AppData folder -->
