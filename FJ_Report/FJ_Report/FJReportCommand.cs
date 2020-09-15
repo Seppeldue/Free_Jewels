@@ -39,17 +39,19 @@ namespace FJ_Report
                 Brep objrefBrep = objref.Brep();
                 double volObj = objrefBrep.GetVolume();
                 double weight = Math.Round(volObj * spezWeight, 3, MidpointRounding.AwayFromZero);
-                matList.Add(matName[pos] + " " + weight + g_ct);
+                materials[pos] += weight; 
+                //matList.Add(matName[pos] + " " + weight + g_ct);
             }
             else if (objType == Rhino.DocObjects.ObjectType.Mesh)
             {
                 Mesh objrefMesh = objref.Mesh();
                 double volObj = objrefMesh.Volume();
                 double weight = Math.Round(volObj * spezWeight, 3, MidpointRounding.AwayFromZero);
-                matList.Add(matName[pos] + " " + weight + g_ct);
+                materials[pos] += weight;
+                //matList.Add(matName[pos] + " " + weight + g_ct);
             }
         }
-        
+        double[] materials = new double[14]; 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
 
@@ -58,6 +60,7 @@ namespace FJ_Report
             Rhino.DocObjects.ObjectEnumeratorSettings settings = new Rhino.DocObjects.ObjectEnumeratorSettings();
             settings.VisibleFilter = true;
             System.Collections.Generic.List<Guid> ids = new System.Collections.Generic.List<Guid>();
+            
             List<string> allItems = new List<string>();
             List<string> metalItems = new List<string>();
             List<string> stoneItems = new List<string>();
@@ -153,6 +156,14 @@ namespace FJ_Report
             metalItems.Sort();
             stoneItems.Sort();
 
+
+            allItems.Add("--------------Metals(g)/Stones(ct)--------------");
+            for (int i = 0; i < materials.Length; i++)
+            {
+                if (materials[i] == 0) continue;
+                allItems.Add(matName[i] + ": " + materials[i] );
+            }
+            /*
             allItems.Add("--------------Metals--------------");
             for (int i = 0; i < metalItems.Count; i++)
             {
@@ -164,6 +175,7 @@ namespace FJ_Report
             {
                 allItems.Add(stoneItems[i]);
             }
+            */
 
             allItems.Add("----------From circles------------");
             double totalCt = 0.0;
@@ -175,7 +187,7 @@ namespace FJ_Report
                 totalCt = totalCt + ct * quantCirclesStones[i];
             }
 
-            allItems.Add("Total Brillant weight: " + totalCt + " ct");
+            allItems.Add("Total brillant weight: " + totalCt + " ct");
 
             String clipboardString = "";
             foreach (String o in allItems)
@@ -187,6 +199,8 @@ namespace FJ_Report
 
 
             Dialogs.ShowListBox("Report", "This data is copied to your clipboard \n Use Ctrl+V to paste", allItems);
+
+            materials = new double[14];
 
             return Result.Success;
         }

@@ -24,6 +24,7 @@ namespace FJ_IterativeOffset
         }
 
         ///<returns>The command name as it appears on the Rhino command line.</returns>
+
         public override string EnglishName
         {
             get { return "FJ_IterativeOffset"; }
@@ -55,7 +56,7 @@ namespace FJ_IterativeOffset
 
             while (true)
             {
-
+                
                 if (gop.Get() == GetResult.Nothing)
                     break;
 
@@ -101,6 +102,7 @@ namespace FJ_IterativeOffset
                 RhinoApp.WriteLine(counter+" out of "+go.ObjectCount+" offset values were out of scope!");
 
             doc.Views.Redraw();
+
             
 
             // ---

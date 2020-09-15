@@ -15,6 +15,12 @@
              Languages="1033" />
 
 		<MajorUpgrade DowngradeErrorMessage="A newer version of Free Jewels is already installed." />
+
+    <Upgrade Id='d62c1559-b5a9-4c3f-9724-6860c498639f'>
+      <UpgradeVersion OnlyDetect='no' Property='PREVIOUSFOUND'
+          Minimum='1.0.0' IncludeMinimum='yes'
+          Maximum='3.0.0' IncludeMaximum='no' />
+    </Upgrade>
     
 		<MediaTemplate EmbedCab="yes"  />
 

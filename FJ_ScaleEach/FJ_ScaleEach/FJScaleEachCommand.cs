@@ -34,37 +34,79 @@ namespace FJ_ScaleEach
         {
             double factorTemp = (scaleCenter.DistanceTo(e.CurrentPoint)) / (scaleCenter.DistanceTo(scaleRefPoint));
             
-
+            //Translate 3d
             if (dimensionIndex == 0)
             {
-                for (int i = 0; i < goList.Count; i++)
+                for (int i = 0; i < dynRef.Count; i++)
                 {
-                    Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
+                    Rhino.DocObjects.ObjRef objref = dynRef[i] as Rhino.DocObjects.ObjRef;
                     var xform = Transform.Scale(centers[i], factorTemp);
-                    e.Display.DrawObject(rhobj, xform);
+                    
+                    Brep brep = objref.Brep();
+                    var index = objref.GeometryComponentIndex.Index;
+                    if (index > 0)
+                    {
+                        brep.TransformComponent(new[] { objref.GeometryComponentIndex }, xform, 0.01, 0, true);
+                        //doc.Objects.Replace(objref.ObjectId, brep);
+
+                        e.Display.DrawBrepWires(brep, System.Drawing.Color.Gray);
+                    }
+                    else
+                    {
+                        Rhino.DocObjects.RhinoObject rhobj = objref.Object();
+                        e.Display.DrawObject(rhobj, xform);
+                    }
+                    
                 }
             }
             //Translate 2d
             else if (dimensionIndex == 1)
             {
-                for (int i = 0; i < goList.Count; i++)
+                for (int i = 0; i < dynRef.Count; i++)
                 {
-                    Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
+                    Rhino.DocObjects.ObjRef objref = dynRef[i] as Rhino.DocObjects.ObjRef;
                     plane2D.Origin = centers[i];
                     var xform = Rhino.Geometry.Transform.Scale(plane2D, factorTemp, factorTemp, 1);
-                    e.Display.DrawObject(rhobj, xform);
+                    Brep brep = objref.Brep();
+                    var index = objref.GeometryComponentIndex.Index;
+                    if (index > 0)
+                    {
+                        brep.TransformComponent(new[] { objref.GeometryComponentIndex }, xform, 0.01, 0, true);
+                        //doc.Objects.Replace(objref.ObjectId, brep);
+
+                        e.Display.DrawBrepWires(brep, System.Drawing.Color.Gray);
+                    }
+                    else
+                    {
+                        Rhino.DocObjects.RhinoObject rhobj = objref.Object();
+                        e.Display.DrawObject(rhobj, xform);
+                    }
                 }
             }
             //Translate 1d
             else if (dimensionIndex == 2)
             {
-                for (int i = 0; i < goList.Count; i++)
+                for (int i = 0; i < dynRef.Count; i++)
                 {
+
                     Vector3d vec = (scaleRefPoint - scaleCenter);
                     Plane scalePlane = new Plane(centers[i], vec);
                     var xform = Transform.Scale(scalePlane, 1, 1, factorTemp);
-                    Rhino.DocObjects.RhinoObject rhobj = goList[i] as Rhino.DocObjects.RhinoObject;
-                    e.Display.DrawObject(rhobj, xform);
+                    Rhino.DocObjects.ObjRef objref = dynRef[i] as Rhino.DocObjects.ObjRef;
+                    Brep brep = objref.Brep();
+                    var index = objref.GeometryComponentIndex.Index;
+                    if (index > 0)
+                    {
+                        brep.TransformComponent(new[] { objref.GeometryComponentIndex }, xform, 0.01, 0, true);
+                        //doc.Objects.Replace(objref.ObjectId, brep);
+
+                        e.Display.DrawBrepWires(brep, System.Drawing.Color.Gray);
+                    }
+                    else
+                    {
+                        Rhino.DocObjects.RhinoObject rhobj = objref.Object();
+                        e.Display.DrawObject(rhobj, xform);
+                    }
                 }
             }
         }
@@ -74,10 +116,11 @@ namespace FJ_ScaleEach
         Point3d scaleCenter = new Point3d();
         Point3d scaleRefPoint = new Point3d();
         double factor = 1;
-        List<Object> goList = new List<Object>();
         string[] dimensions = new string[] { "3D", "2D", "1D" };
         int dimensionIndex = 0;
         Plane plane2D = new Plane();
+        List<Rhino.DocObjects.ObjRef> dynRef = new List<Rhino.DocObjects.ObjRef>();
+        
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
@@ -106,7 +149,7 @@ namespace FJ_ScaleEach
                 Rhino.DocObjects.ObjRef objref = go.Object(i);
                 // get selected surface object
                 Rhino.DocObjects.RhinoObject obj = objref.Object();
-                goList.Add(obj);
+                dynRef.Add(objref);
             }
             Point3d allCenter = centersAdd / centers.Count;
 
@@ -177,6 +220,15 @@ namespace FJ_ScaleEach
                 for (int i = 0; i < go.ObjectCount; i++)
                 {
                     var xform = Transform.Scale(centers[i], factor);
+                    var objref = go.Object(i);
+                    var brep = objref.Brep();
+                    var index = objref.GeometryComponentIndex.Index;
+                    if (index > 0)
+                    {
+                        brep.TransformComponent(new[] { objref.GeometryComponentIndex }, xform, doc.ModelAbsoluteTolerance, 0, true);
+                        doc.Objects.Replace(objref.ObjectId, brep);
+                    }
+                    else
                     doc.Objects.Transform(go.Object(i), xform, true);
                 }
             }
@@ -187,7 +239,16 @@ namespace FJ_ScaleEach
                 {
                     plane2D.Origin = centers[i];
                     var xform = Rhino.Geometry.Transform.Scale(plane2D, factor, factor, 1);
-                    doc.Objects.Transform(go.Object(i), xform, true);
+                    var objref = go.Object(i);
+                    var brep = objref.Brep();
+                    var index = objref.GeometryComponentIndex.Index;
+                    if (index > 0)
+                    {
+                        brep.TransformComponent(new[] { objref.GeometryComponentIndex }, xform, doc.ModelAbsoluteTolerance, 0, true);
+                        doc.Objects.Replace(objref.ObjectId, brep);
+                    }
+                    else
+                        doc.Objects.Transform(go.Object(i), xform, true);
                 }
             }
             //Translate 1d
@@ -198,14 +259,23 @@ namespace FJ_ScaleEach
                     Vector3d vec = (scaleRefPoint - scaleCenter);
                     Plane scalePlane = new Plane(centers[i], vec);
                     var xform = Transform.Scale(scalePlane, 1, 1, factor);
-                    doc.Objects.Transform(go.Object(i), xform, true);
+                    var objref = go.Object(i);
+                    var brep = objref.Brep();
+                    var index = objref.GeometryComponentIndex.Index;
+                    if (index > 0)
+                    {
+                        brep.TransformComponent(new[] { objref.GeometryComponentIndex }, xform, doc.ModelAbsoluteTolerance, 0, true);
+                        doc.Objects.Replace(objref.ObjectId, brep);
+                    }
+                    else
+                        doc.Objects.Transform(go.Object(i), xform, true);
                 }
             }
 
-            goList = new List<Object>();
             centers = new List<Point3d>();
             dimensionIndex = 0;
             plane2D = new Plane();
+            dynRef = new List<Rhino.DocObjects.ObjRef>();
 
             doc.Views.Redraw();
             return Result.Success;

@@ -135,20 +135,41 @@ namespace FJ_PaveSet
 
                 if (moveBool == true)
                 {
-                    GetObject gcd = new Rhino.Input.Custom.GetObject();
-                    gcd.SetCommandPrompt("Select circle to move.");
-                    gcd.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
-                    gcd.SubObjectSelect = false;
-                    gcd.DeselectAllBeforePostSelect = true;
-                    gcd.Get();
-                    Rhino.DocObjects.ObjRef delobjref = gcd.Object(0);
-                    Rhino.DocObjects.RhinoObject delobj = delobjref.Object();
-                    Curve curveRadius = delobjref.Curve();
-                    Circle circleRadius = new Circle();
-                    curveRadius.TryGetCircle(out circleRadius, tolerance);
-                    diamStone = circleRadius.Diameter;
-                    doc.Objects.Delete(delobj, true);
-                    doc.Views.Redraw();
+                    while (true)
+                    {
+                        GetObject gcd = new Rhino.Input.Custom.GetObject();
+                        gcd.SetCommandPrompt("Select circle(s) to move. Press enter when done");
+                        gcd.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
+                        gcd.SubObjectSelect = false;
+                        gcd.DeselectAllBeforePostSelect = true;
+                        gcd.AcceptNothing(true);
+                        if (gcd.Get() == GetResult.Nothing) break;
+                        gcd.Get();
+                        Rhino.DocObjects.ObjRef delobjref = gcd.Object(0);
+                        Rhino.DocObjects.RhinoObject delobj = delobjref.Object();
+                        Curve curveRadius = delobjref.Curve();
+                        Circle circleRadius = new Circle();
+                        curveRadius.TryGetCircle(out circleRadius, tolerance);
+                        diamStone = circleRadius.Diameter;
+                        doc.Objects.Delete(delobj, true);
+                        doc.Views.Redraw();
+
+                        getPointAction.Get();
+                        pt0 = getPointAction.Point();
+                        double u, v;
+                        surface.ClosestPoint(pt0, out u, out v);
+                        var direction = surface.NormalAt(u, v);
+                        double x = direction.X;
+                        double y = direction.Y;
+                        double z = direction.Z;
+                        Vector3d vt1 = new Vector3d(x, y, z);
+                        Plane pl1 = new Plane(pt0, vt1);
+                        Circle cr1 = new Circle(pl1, pt0, diamStone / 2);
+                        var crgu = doc.Objects.AddCircle(cr1);
+                        ids.Add(crgu);
+                        doc.Views.Redraw();
+
+                    }
                     moveBool = false;
                 }
                 if (optionBool == true)
