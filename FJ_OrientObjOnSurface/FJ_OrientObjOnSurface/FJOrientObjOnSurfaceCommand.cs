@@ -66,6 +66,8 @@ namespace FJ_OrientObjOnSurface
         Point3d instancePoint;
         Plane instancePlane;
 
+        bool copyBol = false;
+
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
 
@@ -85,7 +87,7 @@ namespace FJ_OrientObjOnSurface
             if (obj == null)
                 return Result.Failure;
             surface = objref.Surface();
-
+            
 
             //relocate block instance
             if (surface == null)
@@ -121,14 +123,32 @@ namespace FJ_OrientObjOnSurface
             obj.Select(false);
 
             //pick objekt to orient
+            var copy = new Rhino.Input.Custom.OptionToggle(false, "No", "Yes");
+
             GetObject go = new GetObject();
             go.SetCommandPrompt("Select object to orient.");
+            go.AddOptionToggle("Copy", ref copy);
             go.SubObjectSelect = true;
             go.DeselectAllBeforePostSelect = false;
             go.GroupSelect = true;
-            go.GetMultiple(1, -1);
-            if (gs.CommandResult() != Result.Success)
-                return gs.CommandResult();
+
+            for (; ; )
+            {
+                var res = go.GetMultiple(1, -1);
+                if (gs.CommandResult() != Result.Success)
+                    return gs.CommandResult();
+                if (res == GetResult.Option)
+                {
+                    copyBol = copy.CurrentValue;
+                    continue;
+                }
+                if (gs.CommandResult() != Result.Success)
+                    return gs.CommandResult();
+
+                break;
+            }
+
+            
 
             int obCount = go.ObjectCount;
             string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
@@ -180,29 +200,64 @@ namespace FJ_OrientObjOnSurface
             Rhino.DocObjects.RhinoObject objDrw = objref2.Object();
 
             //orient plane to surface
-            Rhino.Input.Custom.GetPoint gps = new Rhino.Input.Custom.GetPoint();
-            gps.SetCommandPrompt("Point on surface to orient to");
-            gps.Constrain(surface, false);
+            if (copyBol)
+            {
+                while (true)
+                {
+                    Rhino.Input.Custom.GetPoint gps = new Rhino.Input.Custom.GetPoint();
+                    gps.SetCommandPrompt("Point on surface to orient to. Press enter when done.");
+                    gps.Constrain(surface, false);
+                    gps.AcceptNothing(true);
+                    gps.DynamicDraw += RefObjDraw;
+                    gps.Tag = objDrw;
 
-            gps.DynamicDraw += RefObjDraw;
-            gps.Tag = objDrw;
+                    var res = gps.Get();
 
-            gps.Get();
-            if (gps.CommandResult() != Rhino.Commands.Result.Success)
-                return gps.CommandResult();
-            Point3d pts = gps.Point();
-            double u, v;
-            surface.ClosestPoint(pts, out u, out v);
-            Vector3d direction = surface.NormalAt(u, v);
-            Plane pl1 = new Plane(pts, direction);
+                    if (res == GetResult.Nothing) break;
+                    //else if (gps.CommandResult() != Rhino.Commands.Result.Success)
+                    //    return gps.CommandResult();
+                    
 
-            Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, pl1);
+                    Point3d pts = gps.Point();
+                    double u, v;
+                    surface.ClosestPoint(pts, out u, out v);
+                    Vector3d direction = surface.NormalAt(u, v);
+                    Plane pl1 = new Plane(pts, direction);
 
-            doc.Objects.AddInstanceObject(orientBlock, xform);
+                    Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, pl1);
 
-            doc.Objects.Delete(objDrw);
+                    doc.Objects.AddInstanceObject(orientBlock, xform);
 
-            //make plane gumball  https://github.com/mcneel/rhino-developer-samples/blob/6/rhinocommon/cs/SampleCsCommands/SampleCsGumballCylinder.cs
+                    doc.Objects.Delete(objDrw);
+
+                }
+                copyBol = false;
+            }
+            else
+            {
+                Rhino.Input.Custom.GetPoint gps = new Rhino.Input.Custom.GetPoint();
+                gps.SetCommandPrompt("Point on surface to orient to");
+                gps.Constrain(surface, false);
+
+                gps.DynamicDraw += RefObjDraw;
+                gps.Tag = objDrw;
+
+                gps.Get();
+                if (gps.CommandResult() != Rhino.Commands.Result.Success)
+                    return gps.CommandResult();
+                Point3d pts = gps.Point();
+                double u, v;
+                surface.ClosestPoint(pts, out u, out v);
+                Vector3d direction = surface.NormalAt(u, v);
+                Plane pl1 = new Plane(pts, direction);
+
+                Rhino.Geometry.Transform xform = Rhino.Geometry.Transform.PlaneToPlane(originPlane, pl1);
+
+                doc.Objects.AddInstanceObject(orientBlock, xform);
+
+                doc.Objects.Delete(objDrw);
+
+            }
 
             surface2 = surface;
 
