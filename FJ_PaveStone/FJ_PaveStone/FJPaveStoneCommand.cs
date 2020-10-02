@@ -84,6 +84,7 @@ namespace FJ_PaveStone
                 custom.Reflectivity = 1;
                 custom.Transparency = 0.2;
                 custom.SetEnvironmentTexture(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/Free Jewels Rhino Plug-Ins/Dia3.jpg");
+                custom.Name = "Diamond";
                 custom.CommitChanges();
 
                 rm = RenderMaterial.CreateBasicMaterial(custom);
