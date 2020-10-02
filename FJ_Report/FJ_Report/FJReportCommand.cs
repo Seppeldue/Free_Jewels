@@ -37,6 +37,8 @@ namespace FJ_Report
             if ((objType == Rhino.DocObjects.ObjectType.Surface | objType == Rhino.DocObjects.ObjectType.PolysrfFilter | objType == Rhino.DocObjects.ObjectType.Brep | objType == Rhino.DocObjects.ObjectType.Extrusion))
             {
                 Brep objrefBrep = objref.Brep();
+                bool bc = objrefBrep.IsSolid;
+                if (bc == false) open ++;
                 double volObj = objrefBrep.GetVolume();
                 double weight = Math.Round(volObj * spezWeight, 3, MidpointRounding.AwayFromZero);
                 materials[pos] += weight; 
@@ -45,13 +47,16 @@ namespace FJ_Report
             else if (objType == Rhino.DocObjects.ObjectType.Mesh)
             {
                 Mesh objrefMesh = objref.Mesh();
+                bool bc = objrefMesh.IsClosed;
+                if (bc == false) open++;
                 double volObj = objrefMesh.Volume();
                 double weight = Math.Round(volObj * spezWeight, 3, MidpointRounding.AwayFromZero);
                 materials[pos] += weight;
                 //matList.Add(matName[pos] + " " + weight + g_ct);
             }
         }
-        double[] materials = new double[14]; 
+        double[] materials = new double[14];
+        int open = 0;
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
 
@@ -66,6 +71,7 @@ namespace FJ_Report
             List<string> stoneItems = new List<string>();
             List<double> circleStones = new List<double>();
             List<int> quantCirclesStones = new List<int>();
+            
 
             foreach (Rhino.DocObjects.RhinoObject rhObj in doc.Objects.GetObjectList(settings))
             {
@@ -78,26 +84,30 @@ namespace FJ_Report
                 {
                     Curve curveRadius = objref.Curve();
                     Circle circleRadius = new Circle();
-                    curveRadius.TryGetCircle(out circleRadius, doc.ModelAbsoluteTolerance);
-                    double diamStone = Math.Round(circleRadius.Diameter, 2, MidpointRounding.AwayFromZero);
-
-                    int match = circleStones.IndexOf(diamStone);
-
-                    if (match == -1)
+                    var circlefound = curveRadius.TryGetCircle(out circleRadius, doc.ModelAbsoluteTolerance);
+                    if (circlefound)
                     {
-                        circleStones.Add(diamStone);
-                        quantCirclesStones.Add(1);
-                    }
-                    else
-                    {
-                        int currVal = quantCirclesStones[match];
-                        quantCirclesStones[match] = currVal + 1;
+                        double diamStone = Math.Round(circleRadius.Diameter, 2, MidpointRounding.AwayFromZero);
+
+                        int match = circleStones.IndexOf(diamStone);
+
+                        if (match == -1)
+                        {
+                            circleStones.Add(diamStone);
+                            quantCirclesStones.Add(1);
+                        }
+                        else
+                        {
+                            int currVal = quantCirclesStones[match];
+                            quantCirclesStones[match] = currVal + 1;
+                        }
                     }
                 }
 
                 Rhino.DocObjects.Material mat = rhObj.GetMaterial(true);
                 var objMatName = mat.Name;
                 int pos = Array.IndexOf(matName, objMatName);
+                if (pos == -1) continue;
                 switch (pos)
                 {
                     //18ctGold
@@ -157,7 +167,8 @@ namespace FJ_Report
             stoneItems.Sort();
 
 
-            allItems.Add("--------------Metals(g)/Stones(ct)--------------");
+            allItems.Add("------Metals(g)/Stones(ct) from solids-------");
+            
             for (int i = 0; i < materials.Length; i++)
             {
                 if (materials[i] == 0) continue;
@@ -176,8 +187,10 @@ namespace FJ_Report
                 allItems.Add(stoneItems[i]);
             }
             */
-
-            allItems.Add("----------From circles------------");
+            allItems.Add("-----------------------------------------------");
+            allItems.Add("");
+            allItems.Add("-----------Brillants from circles------------");
+            
             double totalCt = 0.0;
             for (int i = 0; i < circleStones.Count; i++)
             {
@@ -188,6 +201,7 @@ namespace FJ_Report
             }
 
             allItems.Add("Total brillant weight: " + totalCt + " ct");
+            allItems.Add("-----------------------------------------------");
 
             String clipboardString = "";
             foreach (String o in allItems)
@@ -197,10 +211,12 @@ namespace FJ_Report
 
             Clipboard.SetText(clipboardString);
 
+            if (open > 0) Dialogs.ShowMessage("At least one object is not closed. Weights might be false.","Warning!");
 
             Dialogs.ShowListBox("Report", "This data is copied to your clipboard \n Use Ctrl+V to paste", allItems);
 
             materials = new double[14];
+            open = 0;
 
             return Result.Success;
         }

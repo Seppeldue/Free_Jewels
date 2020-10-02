@@ -82,6 +82,7 @@ namespace FJ_PaveStone
                 //Create a basic material
                 var custom = new Rhino.DocObjects.Material();
                 custom.Reflectivity = 1;
+                custom.Transparency = 0.2;
                 custom.SetEnvironmentTexture(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/Free Jewels Rhino Plug-Ins/Dia3.jpg");
                 custom.CommitChanges();
 

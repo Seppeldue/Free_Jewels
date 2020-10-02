@@ -19,7 +19,7 @@
         </text>
         <tool_bar_id>ee824f1d-de93-46ac-baba-71065d24191e</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="8192" bar_id="59478" mru_width="868" point_pos="-2,-2" float_point="365,213" rect_mru_dock_pos="0,0,0,0" dock_location_u="59419" dock_location="top" float_size="174,566" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="8192" bar_id="59472" mru_width="868" point_pos="-2,-2" float_point="365,213" rect_mru_dock_pos="0,0,0,0" dock_location_u="59419" dock_location="top" float_size="174,566" />
     </tool_bar_group>
     <tool_bar_group guid="abcb544d-c102-4de2-8dba-af9d637872b3" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="bc4471dd-6842-423a-a60b-394eff2e23a5" active_tool_bar_group="81c70b26-f07a-4b3d-ab97-39c56838b88d" single_file="False" hide_single_tab="False" point_floating="519,275">
       <text>
@@ -31,7 +31,7 @@
         </text>
         <tool_bar_id>e7ac3e65-cde3-4b8a-89d1-ebd7195e29e8</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="True" mru_float_style="8192" bar_id="59479" mru_width="32767" point_pos="-2,-2" float_point="519,275" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="555,62" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="True" mru_float_style="8192" bar_id="59473" mru_width="32767" point_pos="-2,-2" float_point="519,275" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="489,62" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars>
@@ -114,9 +114,6 @@
       </tool_bar_item>
       <tool_bar_item guid="34ee211b-54b2-48b1-b61e-e98de7d0e836">
         <left_macro_id>a657add5-19d7-4dc3-9a8e-8c20984a2b79</left_macro_id>
-      </tool_bar_item>
-      <tool_bar_item guid="49f47f3e-d890-4c88-afde-85b8fa111b37">
-        <left_macro_id>2d10c341-08c9-4e07-ad6c-14daefe3dac2</left_macro_id>
       </tool_bar_item>
     </tool_bar>
     <tool_bar guid="ee824f1d-de93-46ac-baba-71065d24191e" item_display_style="control_and_text">
@@ -603,7 +600,7 @@
       <bitmap_item guid="cc686122-3f92-4657-9f83-f7ca9a67734b" index="31" />
       <bitmap_item guid="b45d773d-2892-4974-be43-e4ccbd0c671a" index="32" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABAAAAIQCAYAAACIbO5IAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwgAADsIBFShKgAAAAixJREFUeF7t08+rTGEAxvEzZWaOojFpEKIusbKwkCwYN1y32M1kZsxM
+AAAOwQAADsEBuJFr7QAAAixJREFUeF7t08+rTGEAxvEzZWaOojFpEKIusbKwkCwYN1y32M1kZsxM
 VkTRLfnR3bjJbxdZSFlQbCxlRf4CCzY2lOxcWZD4B47nOXNfzWJGV2cz6fup750zb+e8877nnBsB
 AAAAAABkkFdT6qm66YGFWqSWqGk1rlaq1+q+itVAK9QetVfdUY/VK7VM2UP1RT1Sh5TP3apSY+q6
 uq0uqeXKPOkZdU29VIuVHVU+13mF0S71Tt1SR9Ru5V/wuL97groK417lbLlcfpvL5bzaaJ+6oby/
@@ -650,7 +647,7 @@ UfQbnXrLK6szisgAAAAASUVORK5CYII=</bitmap>
       <bitmap_item guid="cc686122-3f92-4657-9f83-f7ca9a67734b" index="31" />
       <bitmap_item guid="b45d773d-2892-4974-be43-e4ccbd0c671a" index="32" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABgAAAMYCAYAAADRnydlAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwgAADsIBFShKgAAASwBJREFUeF7tfQdYVFe7NZpqYmzpiYkKAzPM0ARBUBQLIBasWGPHhh3E
+AAAOwQAADsEBuJFr7QAASwBJREFUeF7tfQdYVFe7NZpqYmzpiYkKAzPM0ARBUBQLIBasWGPHhh3E
 FnsXE4010dhN1RQ1RhM1RqNRsaCJ3dix0sGCjeH937XnnOFMZUDz3/vdj/U8y9lnl7V2P5sz44xT
 MUDS67+GEoNCUWJQKJ6eQUZlFZmTo63FOQ7LgsSvSqIFJtdWyliBbVELmMWZ5rVqZClsF3bSTY1E
 lKm4Q3Agn8KkGAYO4P+ngUlAJDyJUUH5Ak0JphFyRkfMLPNaiMuwnqAUsEZT2BSXgQwypahCUZwy
@@ -1024,7 +1021,7 @@ JkwQ/5GKg8U2MYfJX/fYMSdOnPjUTYz4888/qcTEYZSYFAn/0yZPD0oT/Ic3jnq6BoBswmcjfDX4
       <bitmap_item guid="cc686122-3f92-4657-9f83-f7ca9a67734b" index="31" />
       <bitmap_item guid="b45d773d-2892-4974-be43-e4ccbd0c671a" index="32" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAACAAAAQgCAYAAACHNV7nAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwgAADsIBFShKgAAABTRJREFUeF7t11mIXXcBx/HRGKujotXaUSFRIiLJxFIppUGwtoq27sbW
+AAAOwQAADsEBuJFr7QAABTRJREFUeF7t11mIXXcBx/HRGKujotXaUSFRIiLJxFIppUGwtoq27sbW
 CC4vGiUxEJMmcYm0al3q0uK+VIMx+qC0YMQHMYqguEewL7HQuARq1T6YtjYRS6XU3+9yT7iMc5s2
 i0+fD3y5c+/ce+Z/z/mf/zkzAwAAAAAAAAAAAAAAAAAAAHCCnpDel/6Y/pTuSB9Kj0mn3Rnp+rQ7
 XZbemP6e/pE+kR6eTpunpfemr6dX9YWxN6T96c7UPfHEdEo8Or0srR33mfTv9MK00BXp/nEfTX3/
