@@ -335,7 +335,7 @@ namespace FJ_GemMaker
             mesh.Vertices.Add(-((((emLength - emLine) / 2) * 0.56 * emFat2) + (emLine / 2)), -((em2Width / 2) * 0.56 * emFat2), -(((emHigth - emTop - (emGridle / 2)) * 0.55) + (emGridle / 2))); //8
             mesh.Vertices.Add(-((((em2Length - emLine) / 2) * 0.565 * emFat2) + (emLine / 2)), -((emWidth / 2) * 0.565 * emFat2), -(((emHigth - emTop - (emGridle / 2)) * 0.55) + (emGridle / 2))); //9
             mesh.Vertices.Add(((((em2Length - emLine) / 2) * 0.565 * emFat2) + (emLine / 2)), -((emWidth / 2) * 0.565 * emFat2), -(((emHigth - emTop - (emGridle / 2)) * 0.55) + (emGridle / 2))); //10
-            mesh.Vertices.Add(((((emLength - emLine) / 2) * 0.565 * emFat2) + (emLine / 2)), -((em2Width / 2) * 0.56 * emFat2), -(((emHigth - emTop - (emGridle / 2)) * 0.55) + (emGridle / 2))); //11
+            mesh.Vertices.Add(((((emLength - emLine) / 2) * 0.56 * emFat2) + (emLine / 2)), -((em2Width / 2) * 0.56 * emFat2), -(((emHigth - emTop - (emGridle / 2)) * 0.55) + (emGridle / 2))); //11
 
             mesh.Vertices.Add(-((((emLength - emLine) / 2) * 0.8 * emFat1) + (emLine / 2)), ((em2Width / 2) * 0.82 * emFat1), -(((emHigth - emTop - (emGridle / 2)) * 0.27) + (emGridle / 2))); //12
             mesh.Vertices.Add(-((((emLength - emLine) / 2) * 0.8 * emFat1) + (emLine / 2)), -((em2Width / 2) * 0.82 * emFat1), -(((emHigth - emTop - (emGridle / 2)) * 0.27) + (emGridle / 2))); //13

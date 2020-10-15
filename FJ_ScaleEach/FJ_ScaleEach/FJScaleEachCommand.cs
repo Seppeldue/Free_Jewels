@@ -5,6 +5,7 @@ using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
+using Rhino.DocObjects;
 
 namespace FJ_ScaleEach
 {
@@ -124,12 +125,13 @@ namespace FJ_ScaleEach
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
-
-
+            var myTypes = ObjectType.AnyObject ^ ObjectType.BrepLoop;
+            
 
             //pick objects to expand
             Rhino.Input.Custom.GetObject go = new Rhino.Input.Custom.GetObject();
             go.SetCommandPrompt("Select objects to scale");
+            go.GeometryFilter = myTypes;
             //go.GroupSelect = true;
             go.SubObjectSelect = true;
             //go.EnableClearObjectsOnEntry(false);
