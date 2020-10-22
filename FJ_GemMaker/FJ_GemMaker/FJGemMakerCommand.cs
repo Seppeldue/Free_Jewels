@@ -5,6 +5,7 @@ using Rhino.Commands;
 using Rhino.Geometry;
 using Rhino.Input;
 using Rhino.Input.Custom;
+using System.Linq;
 
 namespace FJ_GemMaker
 {
@@ -314,7 +315,7 @@ namespace FJ_GemMaker
         double bagLength = 1.0;
         double bagWidth = 0.62;
 
-        public static Guid EmeraldGem(RhinoDoc doc, double emWidth, double emLength, double em2Width, double em2Length, double emHigth, double emGridle, double emTop, double emFatt, double emLine)
+        public static Tuple<Guid, Guid> EmeraldGem(RhinoDoc doc, double emWidth, double emLength, double em2Width, double em2Length, double emHigth, double emGridle, double emTop, double emFatt, double emLine)
         {
             double emFat3 = 1 + (emFatt / 20);
             double emFat2 = 1 + (emFatt / 50);
@@ -408,22 +409,48 @@ namespace FJ_GemMaker
             mesh.Faces.AddFace(32, 33, 36);
             mesh.Faces.AddFace(33, 34, 35, 36);
 
+            
+
+            Point3d center = new Point3d(0.0, 0.0, 0.0);
+            Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
+
+            List<Point3d> vPointList = new List<Point3d>();
+
+            foreach (int value in Enumerable.Range(22, 5))
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(value);
+                vPointList.Add(vPoint);
+            }
+            for (int p = 23; p < 27; p++)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                Transform xform = Transform.Rotation(Math.PI, rotVec, center);
+                vPoint.Transform(xform);
+                vPointList.Add(vPoint);
+            }
+            for (int p = 0; p < vPointList.Count; p++)
+            {
+                var x = vPointList[p];
+                x.Z = 0;
+                vPointList[p] = x;
+            }
+            PolylineCurve emCutLine = new PolylineCurve(vPointList);
+
             mesh.Unweld(0.001, false);
-
-
 
             Mesh meshAll = new Mesh();
             for (int i = 0; i < 2; i++)
             {
                 meshAll.Append(mesh);
-                Point3d center = new Point3d(0.0, 0.0, 0.0);
-                Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
                 mesh.Rotate(Math.PI, rotVec, center);
             }
             meshAll.Compact();
             meshAll.Weld(0.001);
             Guid stone = doc.Objects.AddMesh(meshAll);
-            return stone;
+            Guid stoneLine = doc.Objects.AddCurve(emCutLine);
+            return Tuple.Create(stone, stoneLine);
+            
+            
 
         }
         double emLength = 2.0;
@@ -436,7 +463,7 @@ namespace FJ_GemMaker
         double emLine = 0.65;
         double emFatt = 1.0;
 
-        public static Guid PearGem(RhinoDoc doc, double pearLength, double pearWidth)
+        public static Tuple<Guid, Guid> PearGem(RhinoDoc doc, double pearLength, double pearWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -549,7 +576,43 @@ namespace FJ_GemMaker
             mesh.Faces.AddFace(43, 44, 45, 48);
             mesh.Faces.AddFace(45, 46, 47, 48);
 
+
+            Point3d center = new Point3d(0.0, 0.0, 0.0);
+            Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
+
+            List<Point3d> vPointList = new List<Point3d>();
+
+            for (int p = 22; p < 39; p++)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                vPointList.Add(vPoint);
+            }
+            vPointList.Reverse();
+
+            for (int p = 23; p < 39; p++)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                Transform xform = Transform.Mirror(Plane.WorldYZ);
+                vPoint.Transform(xform);
+                vPointList.Add(vPoint);
+            }
+            List<Point3d> vPointListLow = new List<Point3d>();
+            for (int p = 0; p < vPointList.Count; p=p+8)
+            {
+                var x = vPointList[p];
+                vPointListLow.Add(x);
+            }
+            for (int p = 0; p< vPointListLow.Count; p++)
+            {
+                var x = vPointListLow[p];
+                x.Z = 0;
+                vPointListLow[p] = x;
+            }
+
+            Curve pearLine = Curve.CreateInterpolatedCurve(vPointListLow, 3);
+
             mesh.Unweld(0.001, false);
+
 
             Mesh meshAll = new Mesh();
             meshAll.Append(mesh);
@@ -571,14 +634,16 @@ namespace FJ_GemMaker
             Transform scale3D = new Transform();
             scale3D = Transform.Scale(pl0, pearWidth, (pearLength / 1.6), pearWidth);
             meshAll.Transform(scale3D);
+            pearLine.Transform(scale3D);
             Guid stone = doc.Objects.AddMesh(meshAll);
-            return stone;
+            Guid stoneLine = doc.Objects.AddCurve(pearLine);
+            return Tuple.Create(stone, stoneLine);
 
         }
         double pearLength = 1.6;
         double pearWidth = 1.0;
 
-        public static Guid NavGem(RhinoDoc doc, double navLength, double navWidth)
+        public static Tuple<Guid, Guid> NavGem(RhinoDoc doc, double navLength, double navWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -670,13 +735,55 @@ namespace FJ_GemMaker
 
             mesh.Faces.AddFace(45, 46, 47, 48);
 
+
+            List<Point3d> vPointList = new List<Point3d>();
+
+            for (int p = 38; p > 29; p--)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                vPointList.Add(vPoint);
+            }
+            for (int p = 31; p < 39; p++)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+
+                Transform xform = Transform.Mirror(Plane.WorldZX);
+                vPoint.Transform(xform);
+                vPointList.Add(vPoint);
+            }
+            vPointList.Reverse();
+            for (int p = 0; p < vPointList.Count; p++)
+            {
+                var x = vPointList[p];
+                x.Z = 0;
+                vPointList[p] = x;
+            }
+            List<Point3d> vPointListLow = new List<Point3d>();
+            for (int p = 0; p < vPointList.Count; p = p + 4)
+            {
+                var x = vPointList[p];
+                vPointListLow.Add(x);
+            }
+            Point3d origin = new Point3d(0.0, 0.0, 0.0);
+            Vector3d vt1 = new Vector3d(0.0, 0.0, 1.0);
+
+            Curve navLine1 = Curve.CreateInterpolatedCurve(vPointListLow, 3);
+            Curve navLine2 = navLine1.DuplicateCurve();
+            navLine2.Rotate(Math.PI, vt1, origin);
+            List<Curve> curveList = new List<Curve>();
+            curveList.Add(navLine1);
+            curveList.Add(navLine2);
+
+            Curve[] navLineList = Curve.JoinCurves(curveList, doc.ModelAbsoluteTolerance);
+            Curve navLine = navLineList[0];
+
             mesh.Unweld(0.001, false);
 
             Mesh meshAll = new Mesh();
             Mesh meshAll2 = new Mesh();
             meshAll.Append(mesh);
 
-            Point3d origin = new Point3d(0.0, 0.0, 0.0);
+            
             Vector3d vtmY = new Vector3d(1.0, 0.0, 0.0);
             Plane plmY = new Plane(origin, vtmY);
             Transform mirrorY = new Transform();
@@ -697,13 +804,16 @@ namespace FJ_GemMaker
             meshAll2.Weld(0.001);
 
 
-            Vector3d vt1 = new Vector3d(0.0, 0.0, 1.0);
+            
             Plane pl0 = new Plane(origin, vt1);
             Transform scale3D = new Transform();
             scale3D = Transform.Scale(pl0, navWidth, (navLength / 2.2), navWidth);
             meshAll2.Transform(scale3D);
+            navLine.Transform(scale3D);
+
             Guid stone = doc.Objects.AddMesh(meshAll2);
-            return stone;
+            Guid stoneLine = doc.Objects.AddCurve(navLine);
+            return Tuple.Create(stone, stoneLine);
             
         }
         double navLength = 2.2;
@@ -871,7 +981,7 @@ namespace FJ_GemMaker
         double tW1 = 0.62;
         double tW2 = 0.4;
 
-        public static Guid TrilGem(RhinoDoc doc, double trilLength)
+        public static Tuple<Guid, Guid> TrilGem(RhinoDoc doc, double trilLength)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -929,6 +1039,43 @@ namespace FJ_GemMaker
             mesh.Faces.AddFace(8, 15, 21);
             mesh.Faces.AddFace(15, 20, 21);
 
+            List<Point3d> vPointList = new List<Point3d>();
+
+            for (int p = 10; p < 15; p = p+2)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                vPointList.Add(vPoint);
+            }
+            
+            for (int p = 0; p < vPointList.Count; p++)
+            {
+                var x = vPointList[p];
+                x.Z = 0;
+                vPointList[p] = x;
+            }
+
+            
+            Curve triLine1 = Curve.CreateInterpolatedCurve(vPointList, 3);
+
+            List<Curve> listTriLine = new List<Curve>();
+
+            Point3d center = new Point3d(0.0, 0.0, 0.0);
+            Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
+
+            for (int i = 0; i < 3; i++)
+            {
+                listTriLine.Add(triLine1);
+                Curve triLine2 = triLine1.DuplicateCurve();
+                triLine2.Rotate((2*Math.PI) / 3, rotVec, center);
+                triLine1 = triLine2;
+                
+            }
+
+            Curve[] listTriLineJoin = Curve.JoinCurves(listTriLine, doc.ModelAbsoluteTolerance);
+            Curve triLine = listTriLineJoin[0];
+
+
+
             mesh.Unweld(0.001, false);
 
             Mesh meshAll = new Mesh();
@@ -937,8 +1084,7 @@ namespace FJ_GemMaker
             Point3d origin = new Point3d(0.0, 0.0, 0.0);
             Vector3d vtm = new Vector3d(1.0, 0.0, 0.0);
             Plane plm = new Plane(origin, vtm);
-            Transform mirror1 = new Transform();
-            mirror1 = Transform.Mirror(plm);
+            Transform mirror1 = Transform.Mirror(plm);
             mesh.Transform(mirror1);
             meshAll.Append(mesh);
 
@@ -947,13 +1093,15 @@ namespace FJ_GemMaker
             meshAll.Weld(0.001);
 
             meshAll.Scale(trilLength);
+            triLine.Scale(trilLength);
             Guid stone = doc.Objects.AddMesh(meshAll);
-            return stone;
+            Guid stoneLine = doc.Objects.AddCurve(triLine);
+            return Tuple.Create(stone, stoneLine);
 
         }
         double trilLength = 1.0;
 
-        public static Guid CushGem(RhinoDoc doc, double cushLength, double cushWidth)
+        public static Tuple<Guid, Guid> CushGem(RhinoDoc doc, double cushLength, double cushWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -1017,6 +1165,37 @@ namespace FJ_GemMaker
             mesh.Faces.AddFace(22, 26, 25);
             mesh.Faces.AddFace(24, 25, 26, 27);
 
+            List<Point3d> vPointList = new List<Point3d>();
+
+            for (int p = 12; p < 21; p = p + 2)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                vPointList.Add(vPoint);
+            }
+
+            for (int p = 0; p < vPointList.Count; p++)
+            {
+                var x = vPointList[p];
+                x.Z = 0;
+                vPointList[p] = x;
+            }
+            Curve cushLine1 = Curve.CreateInterpolatedCurve(vPointList, 3);
+            List<Curve> listChushLine = new List<Curve>();
+
+            Point3d center = new Point3d(0.0, 0.0, 0.0);
+            Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
+
+            for (int i = 0; i < 4; i++)
+            {
+                listChushLine.Add(cushLine1);
+                Curve cushLine2 = cushLine1.DuplicateCurve();
+                cushLine2.Rotate(Math.PI / 2, rotVec, center);
+                cushLine1 = cushLine2;
+            }
+
+            Curve[] listChushLineJoin = Curve.JoinCurves(listChushLine, doc.ModelAbsoluteTolerance);
+            Curve cushLine = listChushLineJoin[0];
+            Curve cushLineFit = cushLine.Rebuild(14, 3, false);
 
 
             mesh.Unweld(0.001, false);
@@ -1025,8 +1204,6 @@ namespace FJ_GemMaker
             for (int i = 0; i < 4; i++)
             {
                 meshAll.Append(mesh);
-                Point3d center = new Point3d(0.0, 0.0, 0.0);
-                Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
                 mesh.Rotate(Math.PI / 2, rotVec, center);
             }
             meshAll.Compact();
@@ -1038,13 +1215,15 @@ namespace FJ_GemMaker
             Transform scale1D = new Transform();
             scale1D = Transform.Scale(pl0, cushLength, cushWidth, cushWidth);
             meshAll.Transform(scale1D);
+            cushLineFit.Transform(scale1D);
+            Guid stoneLine = doc.Objects.AddCurve(cushLineFit);
             Guid stone = doc.Objects.AddMesh(meshAll);
-            return stone;
+            return Tuple.Create(stone, stoneLine);
         }
         double cushLength = 1.5;
         double cushWidth = 1.0;
 
-        public static Guid AntGem(RhinoDoc doc, double antLength, double antWidth)
+        public static Tuple<Guid, Guid> AntGem(RhinoDoc doc, double antLength, double antWidth)
         {
             Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
 
@@ -1108,6 +1287,50 @@ namespace FJ_GemMaker
             mesh.Faces.AddFace(22, 26, 25);
             mesh.Faces.AddFace(24, 25, 26, 27);
 
+            List<Point3d> vPointList = new List<Point3d>();
+
+            for (int p = 16; p < 21; p++)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+                vPointList.Add(vPoint);
+            }
+            for (int p = 19; p > 15; p--)
+            {
+                Point3d vPoint = mesh.Vertices.Point3dAt(p);
+
+                Transform xform = Transform.Mirror(Plane.WorldYZ);
+                vPoint.Transform(xform);
+                vPointList.Add(vPoint);
+            }
+
+            for (int p = 0; p < vPointList.Count; p++)
+            {
+                var x = vPointList[p];
+                x.Z = 0;
+                vPointList[p] = x;
+            }
+            List<Point3d> vPointList2 = new List<Point3d>();
+            for (int p = 0; p < vPointList.Count; p = p+2)
+            {
+                vPointList2.Add(vPointList[p]);
+            }
+            Curve cushLine1 = Curve.CreateInterpolatedCurve(vPointList2, 3);
+            List<Curve> listChushLine = new List<Curve>();
+
+            Point3d center = new Point3d(0.0, 0.0, 0.0);
+            Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
+
+            for (int i = 0; i < 4; i++)
+            {
+                listChushLine.Add(cushLine1);
+                Curve cushLine2 = cushLine1.DuplicateCurve();
+                cushLine2.Rotate(Math.PI / 2, rotVec, center);
+                cushLine1 = cushLine2;
+            }
+
+            Curve[] listChushLineJoin = Curve.JoinCurves(listChushLine, doc.ModelAbsoluteTolerance);
+            Curve cushLine = listChushLineJoin[0];
+
 
 
             mesh.Unweld(0.001, false);
@@ -1116,8 +1339,6 @@ namespace FJ_GemMaker
             for (int i = 0; i < 4; i++)
             {
                 meshAll.Append(mesh);
-                Point3d center = new Point3d(0.0, 0.0, 0.0);
-                Vector3d rotVec = new Vector3d(0.0, 0.0, 1.0);
                 mesh.Rotate(Math.PI / 2, rotVec, center);
             }
             meshAll.Compact();
@@ -1129,8 +1350,10 @@ namespace FJ_GemMaker
             Transform scale1D = new Transform();
             scale1D = Transform.Scale(pl0, antLength, antWidth, antWidth);
             meshAll.Transform(scale1D);
+            cushLine.Transform(scale1D);
+            Guid stoneLine = doc.Objects.AddCurve(cushLine);
             Guid stone = doc.Objects.AddMesh(meshAll);
-            return stone;
+            return Tuple.Create (stone, stoneLine);
         }
         double antLength = 1.5;
         double antWidth = 1.0;
@@ -1204,8 +1427,13 @@ namespace FJ_GemMaker
                     stoneDiam.AddOptionDouble("Diameter", ref diamBrill);
                     GetResult res = stoneDiam.Get();
                     brillDiam = diamBrill.CurrentValue;
+
+                    Circle brillCircle = new Circle(Plane.WorldXY ,brillDiam/2 );
+                    Guid stoneCircle = doc.Objects.AddCircle(brillCircle);
+
                     if (res == GetResult.Nothing) break;
                     doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneCircle, false);
                 }
                 
             }
@@ -1227,8 +1455,14 @@ namespace FJ_GemMaker
                     GetResult res = stoneOval.Get();
                     ovalLength = lengthOval.CurrentValue;
                     ovalWidth = widthOval.CurrentValue;
+
+                    Ellipse oval = new Ellipse(Plane.WorldXY, ovalLength/2, ovalWidth/2);
+                    
+                    Guid stoneCurve = doc.Objects.AddEllipse(oval);
+
                     if (res == GetResult.Nothing) break;
                     doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneCurve, false);
                 }
 
             }
@@ -1249,8 +1483,26 @@ namespace FJ_GemMaker
                     GetResult res = stoneBag.Get();
                     bagLength = lengthBag.CurrentValue;
                     bagWidth = widthBag.CurrentValue;
+
+                    List<Point3d> recPointList = new List<Point3d>();
+
+                    //Add outline Curve
+                    Point3d recPoint = new Point3d(bagLength / 2, bagWidth / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(-bagLength / 2, bagWidth / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(-bagLength / 2, -bagWidth / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(bagLength / 2, -bagWidth / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(bagLength / 2, bagWidth / 2, 0);
+                    recPointList.Add(recPoint);
+                    PolylineCurve bagCurve = new PolylineCurve(recPointList);
+                    Guid stoneCurve = doc.Objects.AddCurve(bagCurve);
+
                     if (res == GetResult.Nothing) break;
                     doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneCurve, false);
                 }
 
                 
@@ -1269,8 +1521,25 @@ namespace FJ_GemMaker
                     stonePrince.AddOptionDouble("Length", ref lengthPrince);
                     GetResult res = stonePrince.Get();
                     princeLength = lengthPrince.CurrentValue;
+
+                    //Add outline Curve
+                    List<Point3d> recPointList = new List<Point3d>();
+                    Point3d recPoint = new Point3d(princeLength / 2, princeLength / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(-princeLength / 2, princeLength / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(-princeLength / 2, -princeLength / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(princeLength / 2, -princeLength / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(princeLength / 2, princeLength / 2, 0);
+                    recPointList.Add(recPoint);
+                    PolylineCurve princeCurve = new PolylineCurve(recPointList);
+                    Guid stoneCurve = doc.Objects.AddCurve(princeCurve);
+
                     if (res == GetResult.Nothing) break;
                     doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneCurve, false);
                 }
 
             }
@@ -1280,7 +1549,7 @@ namespace FJ_GemMaker
 
                 while (true)
                 {
-                    Guid stone = EmeraldGem(doc, emWidth, emLength, em2Width, em2Length, emHigth, emGridle, emTop, emFatt, emLine);
+                    Tuple<Guid, Guid> stoneTup = EmeraldGem(doc, emWidth, emLength, em2Width, em2Length, emHigth, emGridle, emTop, emFatt, emLine);
                     doc.Views.Redraw();
                     GetOption stoneEm = new GetOption();
                     stoneEm.SetCommandPrompt("Please choose emerald cut length and width.");
@@ -1316,7 +1585,10 @@ namespace FJ_GemMaker
                     emLine = lineEm.CurrentValue;
 
                     if (res == GetResult.Nothing) break;
-                    doc.Objects.Delete(stone, false);
+                    
+
+                    doc.Objects.Delete(stoneTup.Item1, false);
+                    doc.Objects.Delete(stoneTup.Item2, false);
                 }
                 
             }
@@ -1325,7 +1597,7 @@ namespace FJ_GemMaker
             {
                 while (true)
                 {
-                    Guid stone = PearGem(doc, pearLength, pearWidth);
+                    Tuple<Guid, Guid> stoneTup = PearGem(doc, pearLength, pearWidth);
                     doc.Views.Redraw();
                     GetOption stonePear = new GetOption();
                     stonePear.SetCommandPrompt("Please choose pear cut lenght and width.");
@@ -1338,7 +1610,8 @@ namespace FJ_GemMaker
                     pearLength = lengthPear.CurrentValue;
                     pearWidth = widthPear.CurrentValue;
                     if (res == GetResult.Nothing) break;
-                    doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneTup.Item1, false);
+                    doc.Objects.Delete(stoneTup.Item2, false);
                 }
 
                 
@@ -1348,7 +1621,7 @@ namespace FJ_GemMaker
             {
                 while (true)
                 {
-                    Guid stone = NavGem(doc, navLength, navWidth);
+                    Tuple < Guid, Guid > stoneTup = NavGem(doc, navLength, navWidth);
                     doc.Views.Redraw();
                     GetOption stoneNav = new GetOption();
                     stoneNav.SetCommandPrompt("Please choose navette cut lenght and width.");
@@ -1361,7 +1634,8 @@ namespace FJ_GemMaker
                     navLength = lengthNav.CurrentValue;
                     navWidth = widthNav.CurrentValue;
                     if (res == GetResult.Nothing) break;
-                    doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneTup.Item1, false);
+                    doc.Objects.Delete(stoneTup.Item2, false);
                 }
 
                 
@@ -1386,8 +1660,27 @@ namespace FJ_GemMaker
                     tL = trapL.CurrentValue;
                     tW1 = trapW1.CurrentValue;
                     tW2 = trapW2.CurrentValue;
+
+                    //Add outline Curve
+                    List<Point3d> recPointList = new List<Point3d>();
+
+                    Point3d recPoint = new Point3d(tW1 / 2, tL / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(-tW1 / 2, tL / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(-tW2 / 2, -tL / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(tW2 / 2, -tL / 2, 0);
+                    recPointList.Add(recPoint);
+                    recPoint = new Point3d(tW1 / 2, tL / 2, 0);
+                    recPointList.Add(recPoint);
+                    PolylineCurve bagCurve = new PolylineCurve(recPointList);
+                    Guid stoneCurve = doc.Objects.AddCurve(bagCurve);
+
+
                     if (res == GetResult.Nothing) break;
                     doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneCurve, false);
                 }
 
                 
@@ -1397,7 +1690,7 @@ namespace FJ_GemMaker
             {
                 while (true)
                 {
-                    Guid stone = TrilGem(doc, trilLength);
+                    Tuple<Guid,Guid> stoneTri = TrilGem(doc, trilLength);
                     doc.Views.Redraw();
                     GetOption stoneTril = new GetOption();
                     stoneTril.SetCommandPrompt("Please choose trillon length.");
@@ -1407,7 +1700,8 @@ namespace FJ_GemMaker
                     GetResult res = stoneTril.Get();
                     trilLength = lengthTril.CurrentValue;
                     if (res == GetResult.Nothing) break;
-                    doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stoneTri.Item1, false);
+                    doc.Objects.Delete(stoneTri.Item2, false);
                 }
                 
             }
@@ -1416,7 +1710,7 @@ namespace FJ_GemMaker
             {
                 while (true)
                 {
-                    Guid stone = CushGem(doc, cushLength, cushWidth);
+                    Tuple<Guid, Guid> stone = CushGem(doc, cushLength, cushWidth);
                     doc.Views.Redraw();
                     GetOption stoneCush = new GetOption();
                     stoneCush.SetCommandPrompt("Please choose oval cut lenght and width.");
@@ -1429,7 +1723,8 @@ namespace FJ_GemMaker
                     cushLength = lengthCush.CurrentValue;
                     cushWidth = widthCush.CurrentValue;
                     if (res == GetResult.Nothing) break;
-                    doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stone.Item1, false);
+                    doc.Objects.Delete(stone.Item2, false);
                 }
 
                 
@@ -1439,7 +1734,7 @@ namespace FJ_GemMaker
             {
                 while (true)
                 {
-                    Guid stone = AntGem(doc, antLength, antWidth);
+                    Tuple<Guid, Guid> stone = AntGem(doc, antLength, antWidth);
                     doc.Views.Redraw();
                     GetOption stoneAnt = new GetOption();
                     stoneAnt.SetCommandPrompt("Please choose antique cut lenght and width.");
@@ -1452,7 +1747,8 @@ namespace FJ_GemMaker
                     antLength = lengthAnt.CurrentValue;
                     antWidth = widthAnt.CurrentValue;
                     if (res == GetResult.Nothing) break;
-                    doc.Objects.Delete(stone, false);
+                    doc.Objects.Delete(stone.Item1, false);
+                    doc.Objects.Delete(stone.Item2, false);
                 }
 
             }
