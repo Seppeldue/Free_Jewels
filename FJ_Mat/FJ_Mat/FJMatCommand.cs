@@ -47,12 +47,12 @@ namespace FJ_Mat
         }
 
         String[] matName = new String[] { "WhiteGold_18ct", "YellowGold_18ct", "RedGold_18ct", "RodiumBlack_18ct","Silver_925","Platinum_960","Ruby","Emerald","Saphir","Paraiba","Granat","Amethyst","Morganite", "Diamond" };
-        int[] r = new int[] { 230, 250, 255, 50, 242, 242, 255, 0,  0,  0,220,166,225,255 };
-        int[] g = new int[] { 229, 223, 195, 50, 241, 241, 0,  99,  0,206, 84, 26,148,255 };
-        int[] b = new int[] { 229, 155, 160, 50, 241, 241, 0,   0,170,255, 27,184,148,255 };
+        int[] r = new int[] { 230, 243, 255, 50, 242, 230, 255, 0,  0,  0,220,166,225,255 };
+        int[] g = new int[] { 229, 224, 195, 50, 241, 229, 0,  99,  0,206, 84, 26,148,255 };
+        int[] b = new int[] { 229, 166, 160, 50, 241, 229, 0,   0,170,255, 27,184,148,255 };
         
         double[] fjMatTrans = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 0.2, 0.2, 0.2, 0.3, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2 };
-        double[] fjMatShine = new double[] { 0.5, 0.9, 0.9, 0.9, 0.9, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
+        double[] fjMatShine = new double[] { 0.9, 0.9, 0.9, 0.9, 0.9, 0.9, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 };
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
@@ -85,23 +85,26 @@ namespace FJ_Mat
 
                 //Create a basic material
                 var custom = new Rhino.DocObjects.Material();
-                custom.Reflectivity = 1;
-                custom.ReflectionColor = System.Drawing.Color.FromArgb(r[currIntOption], g[currIntOption], b[currIntOption]);
-                custom.Transparency = fjMatTrans[currIntOption];
-                custom.Shine = fjMatShine[currIntOption];
                 custom.Name = matName[currIntOption];
+         
                 if (currIntOption == 13)
                     custom.SetEnvironmentTexture(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)+"/Free Jewels Rhino Plug-Ins/Dia3.jpg");
                 custom.CommitChanges();
 
                 rm = RenderMaterial.CreateBasicMaterial(custom);
-                
+                rm.BeginChange(RenderContent.ChangeContexts.Program);
+                rm.SetParameter("diffuse", System.Drawing.Color.Black);
+                rm.SetParameter("reflectivity", 1.0);
+                rm.SetParameter("reflectivity-color", System.Drawing.Color.FromArgb(r[currIntOption], g[currIntOption], b[currIntOption]));
+                rm.SetParameter("transparency", fjMatTrans[currIntOption]);
+                rm.SetParameter("shine", fjMatShine[currIntOption]);
+                rm.SetParameter("polish-amount", fjMatShine[currIntOption]);
+                rm.EndChange();
 
                 var docMats = doc.RenderMaterials;
 
-                //docMats.BeginChange(RenderContent.ChangeContexts.Program);
                 docMats.Add(rm);
-                //docMats.EndChange();
+                
             }
 
             //Now we always have a material to assign, this part is easy
