@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Rhino;
 using Rhino.Commands;
 using Rhino.Geometry;
@@ -36,6 +37,42 @@ namespace FJ_PaveSet
         }
 
         private bool m_escape_key_pressed = false;
+
+        //Keyboard Hook
+
+        private const int VK_W = 0x57;
+        private const int VK_S = 0x53;
+        private const int VK_A = 0x41;
+        private const int VK_D = 0x44;
+
+        private bool m_w_key_pressed = false;
+        private bool m_s_key_pressed = false;
+        private bool m_a_key_pressed = false;
+        private bool m_d_key_pressed = false;
+
+        void OnRhinoKeyboardEvent(int key)
+        {
+            if (key == VK_W)
+            {
+                m_w_key_pressed = true;
+                diamStone += 0.1;
+            }
+            else if (key == VK_S)
+            {
+                m_s_key_pressed = true;
+                diamStone -= 0.1;
+            }
+            else if (key == VK_A)
+            {
+                m_a_key_pressed = true;
+                offSetStone -= 0.05;
+            }
+            else if (key == VK_D)
+            {
+                m_d_key_pressed = true;
+                offSetStone += 0.05;
+            }
+        }
 
         // Dynamic Draw
         void RefCircleDraw(object sender, Rhino.Input.Custom.GetPointDrawEventArgs e)
@@ -99,11 +136,17 @@ namespace FJ_PaveSet
                 return Result.Failure;
             obj.Select(false);
 
-
+            
             while (true)
             {
+                m_w_key_pressed = false;
+                m_s_key_pressed = false;
+                m_a_key_pressed = false;
+                m_d_key_pressed = false;
+
                 m_escape_key_pressed = false;
                 RhinoApp.EscapeKeyPressed += RhinoApp_EscapeKeyPressed;
+                RhinoApp.KeyboardEvent += OnRhinoKeyboardEvent;
 
                 Point3d pt0;
                 GetPoint getPointAction = new GetPoint();
@@ -121,9 +164,27 @@ namespace FJ_PaveSet
                 getPointAction.AddOptionToggle("Move", ref moveOption);
                 getPointAction.DynamicDraw += RefCircleDraw;
                 getPointAction.Tag = obj;
-                getPointAction.AcceptString(true);
+                getPointAction.AcceptString(false);
                 getPointAction.AcceptNothing(true);
                 var res = getPointAction.Get();
+
+                if (m_w_key_pressed || m_s_key_pressed)
+                {
+                   
+                    stoneDiam.CurrentValue = diamStone;
+                    m_w_key_pressed = false;
+                    m_s_key_pressed = false;
+
+
+                }
+                if (m_a_key_pressed || m_d_key_pressed)
+                {
+                    
+                    stoneOff.CurrentValue = offSetStone;
+                    m_a_key_pressed = false;
+                    m_d_key_pressed = false;
+                }
+
 
                 if (res == GetResult.Nothing) break;
                 if (m_escape_key_pressed) break;
@@ -195,6 +256,7 @@ namespace FJ_PaveSet
                     }
                     optionBool = false;
                 }
+
                 if (res == GetResult.Point)
                 {
                     pt0 = getPointAction.Point();
@@ -211,6 +273,7 @@ namespace FJ_PaveSet
                     ids.Add(crgu);
                     doc.Views.Redraw();
                 }
+             
             }
             RhinoApp.EscapeKeyPressed -= RhinoApp_EscapeKeyPressed;
             doc.Groups.Add(ids);

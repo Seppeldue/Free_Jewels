@@ -111,6 +111,9 @@
       <Feature Id="FJ_ScaleEach" Title="ScaleEach.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="ScaleEach.Installer"/>
       </Feature>
+      <Feature Id="FJ_MultiPipe" Title="Multipipe.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="Multipipe.Installer"/>
+      </Feature>
       <Feature Id="FJ_FreeJewelsToolbar" Title="FreeJewelsToolbar.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="FreeJewelsToolbar.Installer"/>
       </Feature>
@@ -218,6 +221,12 @@
     <DirectoryRef Id="TARGETDIR" >
       <Merge Id="ScaleEach.Installer"
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_ScaleEach\ScaleEach.Installer\bin\Debug\ScaleEach.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="Multipipe.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_MultiPipe\Multipipe.Installer\bin\Debug\Multipipe.Installer.msm"
              Language="1033"
              DiskId="1"/>
     </DirectoryRef>
