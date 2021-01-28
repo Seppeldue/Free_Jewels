@@ -35,42 +35,41 @@ namespace FJ_PaveSet
         {
             m_escape_key_pressed = true;
         }
-
         private bool m_escape_key_pressed = false;
 
-        //Keyboard Hook
+        // Hotkeys
 
         private const int VK_W = 0x57;
         private const int VK_S = 0x53;
         private const int VK_A = 0x41;
         private const int VK_D = 0x44;
 
-        private bool m_w_key_pressed = false;
-        private bool m_s_key_pressed = false;
-        private bool m_a_key_pressed = false;
-        private bool m_d_key_pressed = false;
+        private bool w_key_pressed = false;
+        private bool s_key_pressed = false;
+        private bool a_key_pressed = false;
+        private bool d_key_pressed = false;
 
         void OnRhinoKeyboardEvent(int key)
         {
             if (key == VK_W)
             {
-                m_w_key_pressed = true;
-                diamStone += 0.1;
+                w_key_pressed = true;
+                diamStone = diamStone + 0.05;
             }
             else if (key == VK_S)
             {
-                m_s_key_pressed = true;
-                diamStone -= 0.1;
+                s_key_pressed = true;
+                diamStone = diamStone - 0.05;
             }
             else if (key == VK_A)
             {
-                m_a_key_pressed = true;
-                offSetStone -= 0.05;
+                a_key_pressed = true;
+                offSetStone = offSetStone - 0.025;
             }
             else if (key == VK_D)
             {
-                m_d_key_pressed = true;
-                offSetStone += 0.05;
+                d_key_pressed = true;
+                offSetStone = offSetStone + 0.025;
             }
         }
 
@@ -94,7 +93,6 @@ namespace FJ_PaveSet
             Vector3d vtCurr = new Vector3d(x, y, z);
             Plane planeCircle = new Plane(currentPoint, vtCurr);
             Point3d centerCircleOff = currentPoint + vtCurr * diamStone / 2;
-
 
             Circle dynCircle = new Circle(planeCircle, currentPoint, diamStone / 2);
             e.Display.DrawCircle(dynCircle, System.Drawing.Color.Blue);
@@ -139,10 +137,10 @@ namespace FJ_PaveSet
             
             while (true)
             {
-                m_w_key_pressed = false;
-                m_s_key_pressed = false;
-                m_a_key_pressed = false;
-                m_d_key_pressed = false;
+                w_key_pressed = false;
+                s_key_pressed = false;
+                a_key_pressed = false;
+                d_key_pressed = false;
 
                 m_escape_key_pressed = false;
                 RhinoApp.EscapeKeyPressed += RhinoApp_EscapeKeyPressed;
@@ -168,23 +166,21 @@ namespace FJ_PaveSet
                 getPointAction.AcceptNothing(true);
                 var res = getPointAction.Get();
 
-                if (m_w_key_pressed || m_s_key_pressed)
+                
+                if (w_key_pressed || s_key_pressed)
                 {
-                   
+                    RhinoApp.KeyboardEvent -= OnRhinoKeyboardEvent;
+                    w_key_pressed = false;
+                    s_key_pressed = false;
                     stoneDiam.CurrentValue = diamStone;
-                    m_w_key_pressed = false;
-                    m_s_key_pressed = false;
-
-
                 }
-                if (m_a_key_pressed || m_d_key_pressed)
+                if (a_key_pressed || d_key_pressed)
                 {
-                    
+                    RhinoApp.KeyboardEvent -= OnRhinoKeyboardEvent;
+                    a_key_pressed = false;
+                    d_key_pressed = false;
                     stoneOff.CurrentValue = offSetStone;
-                    m_a_key_pressed = false;
-                    m_d_key_pressed = false;
                 }
-
 
                 if (res == GetResult.Nothing) break;
                 if (m_escape_key_pressed) break;
@@ -194,8 +190,11 @@ namespace FJ_PaveSet
                 optionBool = boolOption.CurrentValue;
                 moveBool = moveOption.CurrentValue;
 
+                RhinoApp.KeyboardEvent -= OnRhinoKeyboardEvent;
+
                 if (moveBool == true)
                 {
+                    RhinoApp.KeyboardEvent -= OnRhinoKeyboardEvent;
                     while (true)
                     {
                         GetObject gcd = new Rhino.Input.Custom.GetObject();
@@ -235,6 +234,7 @@ namespace FJ_PaveSet
                 }
                 if (optionBool == true)
                 {
+                    RhinoApp.KeyboardEvent -= OnRhinoKeyboardEvent;
                     while (true)
                     {
                         GetObject gcd = new Rhino.Input.Custom.GetObject();
@@ -273,8 +273,9 @@ namespace FJ_PaveSet
                     ids.Add(crgu);
                     doc.Views.Redraw();
                 }
-             
+
             }
+            RhinoApp.KeyboardEvent -= OnRhinoKeyboardEvent;
             RhinoApp.EscapeKeyPressed -= RhinoApp_EscapeKeyPressed;
             doc.Groups.Add(ids);
             return Result.Success;
