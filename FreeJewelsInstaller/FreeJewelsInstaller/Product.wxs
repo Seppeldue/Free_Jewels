@@ -33,27 +33,10 @@
     <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)\Assets\InstallerBackground.bmp"/>
     <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)\Assets\InstallerBanner.bmp"/>
     <WixVariable Id="WixUILicenseRtf" Value="$(var.ProjectDir)\Assets\FJ_license.rtf"/>
-    
+
+
+
       <!-- Check for .NET 4.0 -->
-    <PropertyRef Id="NETFRAMEWORK40FULL"/>
-    <Condition Message="This application requires .NET Framework 4.0. Please install the .NET Framework then run this installer again.">
-      <![CDATA[Installed OR NETFRAMEWORK40FULL]]>
-    </Condition>
-
-    <!-- Check for Rhino 6.0 -->
-    <Property Id="RHINOX64">
-      <RegistrySearch Id="TestAppRegSearch"
-                      Root="HKLM"
-                      Key="SOFTWARE\McNeel\Rhinoceros\6.0\Install"
-                      Name="Version"
-                      Type="raw" Win64="yes"/>
-      <!-- Win64=yes is REQUIRED! -->
-    </Property>
-
-    <!-- TODO: check the actual version of Rhino against the version used to build the plug-ins -->
-    <Condition Message="[ProductName] require Rhino 6.0. Please install Rhino then run this installer again.">
-      <![CDATA[Installed OR RHINOX64]]>
-    </Condition>
 
 
     <Feature Id="FreeJewelsInstaller" Title="Free Jewels" Level="1">
