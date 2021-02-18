@@ -87,75 +87,103 @@ namespace FJ_PaveOnLine
 
             if (curves.Count > 1)
             {
-                Point3d po1 = curves[0].PointAtStart;
-                Point3d po2 = curves[1].PointAtStart;
-                LineCurve line1 = new LineCurve(po1, po2);
-
-                double[] param1 = line1.DivideByCount(2, false);
-
-
-                Circle outCircle = Circle.TryFitCircleTTT(line1, curves[0], curves[1], param1[0], param1[0], param1[0]);
-
-                doc.Objects.AddCircle(outCircle);
-
-                /*--
-                var tweenCurves = Curve.CreateTweenCurvesWithSampling(curves[0], curves[1], 1, 30, tolerance);
-                curve = tweenCurves[0];
-                Point3d po1 = curve.PointAtStart;
-                Point3d po2 = curves[0].PointAtStart;
-                double radius = po1.DistanceTo(po2);
-
-                double crv_length = curve.GetLength();
-                double length = radius + offSetStone;
-                Point3d point = curve.PointAtLength(length);
-                points.Add(point);
-
                 while (true)
                 {
-
-                    if (length > crv_length) break;
-
-
-                    double u, v;
-                    surface.ClosestPoint(point, out u, out v);
-                    var direction = surface.NormalAt(u, v);
-                    double x = direction.X;
-                    double y = direction.Y;
-                    double z = direction.Z;
-                    Vector3d vt1 = new Vector3d(x, y, z);
-                    Plane pl1 = new Plane(point, vt1);
-                    Circle circle = new Circle(pl1, point, radius);
-                    Guid cir_guid = doc.Objects.AddCircle(circle);
-                    cir_guid_list.Add(cir_guid);
-
-                    length += (2*radius + offSetStone);
-                    double length2;
-                    point = curve.PointAtLength(length);
-                    curves[0].ClosestPoint(point, out length2);
-                    po2 = curves[0].PointAt(length2);
-                    radius = point.DistanceTo(po2);
+                    
+                    cir_guid_list = new List<Guid>();
+                    
 
 
-                }
-                --*/
+
+                    var tweenCurves = Curve.CreateTweenCurvesWithSampling(curves[0], curves[1], 1, 30, tolerance);
+                    Curve tCurve = tweenCurves[0];
+
+                    //3 point circle
+                    Point3d po1 = curves[0].PointAtStart;
+                    Point3d po2 = curves[1].PointAtStart;
+                    LineCurve line1 = new LineCurve(po1, po2);
+                    double[] param = line1.DivideByCount(2, false);
+
+                    double param1 = param[0];
+                    double param2 = param[0];
+                    double param3 = param[0];
+
+                    Curve curve1 = line1;
 
 
-            }
 
-            else
-            {
-                while (true)
-                {
+                    while (true)
+                    {
+
+                        Circle outCircle = Circle.TryFitCircleTTT(curve1, curves[0], curves[1], param1, param2, param3);
+
+                        
+                        //circle normal to surface
+
+                        Point3d outCircleCenter = outCircle.Center;
+                        double outCircleRadius = outCircle.Radius;
+                        double u, v;
+                        surface.ClosestPoint(outCircleCenter, out u, out v);
+                        var direction = surface.NormalAt(u, v);
+                        Point3d surfCenter = surface.PointAt(u, v);
+                        Plane pl1 = new Plane(surfCenter, direction);
+                        Circle circle = new Circle(pl1, surfCenter, outCircleRadius - offSetStone);
+                        Guid cir_guid = doc.Objects.AddCircle(circle);
+                        cir_guid_list.Add(cir_guid);
+
+                        //if (outCircleRadius/2 >= tCurve.GetLength()) break;
+
+                        //Cut tween curve at latest circle center
+                        Point3d pointOnCurve;
+                        Point3d pointOnCircle;
+                        Curve circleCurve = circle.ToNurbsCurve();
+                        tCurve.Domain = new Interval(0, tCurve.GetLength());
+
+                        Curve[] splitCurves = tCurve.Split(outCircleRadius);
+                        if (splitCurves is null) break;
+                        tCurve = splitCurves[1];
+                        tCurve.ClosestPoints(circleCurve, out pointOnCurve, out pointOnCircle);
+
+                        //Cut tween curve at latest circle border
+                        double curveSplitParam;
+                        tCurve.Domain = new Interval(0, tCurve.GetLength());
+                        tCurve.ClosestPoint(pointOnCurve, out curveSplitParam);
+                        splitCurves = tCurve.Split(curveSplitParam);
+                        tCurve = splitCurves[1];
+
+                        //New parameter at curve1
+                        double circleParam;
+                        circleCurve.ClosestPoint(pointOnCircle, out circleParam);
+                        param1 = circleParam;
+                        curve1 = circleCurve;
+
+                        //New parameter at curves[0]
+                        double paramCurve0New;
+                        curves[0].ClosestPoint(pointOnCircle, out paramCurve0New);
+                        Point3d pointCurve0New = curves[0].PointAt(paramCurve0New);
+                        double distNewPoints0 = pointOnCircle.DistanceTo(pointCurve0New);
+                        param2 = paramCurve0New + distNewPoints0;
+
+                        //New parameter at curves[1]
+                        double paramCurve1New;
+                        curves[0].ClosestPoint(pointOnCircle, out paramCurve1New);
+                        Point3d pointCurve1New = curves[1].PointAt(paramCurve1New);
+                        double distNewPoints1 = pointOnCircle.DistanceTo(pointCurve1New);
+                        param3 = paramCurve1New + distNewPoints1;
+                    }
+
+                    doc.Views.Redraw();
+
 
                     //Options
                     var go = new GetOption();
                     go.SetCommandPrompt("Set options.");
 
-                    var stoneDiam = new Rhino.Input.Custom.OptionDouble(diamStone);
+
                     var stoneOff = new Rhino.Input.Custom.OptionDouble(offSetStone);
                     var boolOption = new Rhino.Input.Custom.OptionToggle(false, "Off", "On");
 
-                    go.AddOptionDouble("StoneDiam", ref stoneDiam);
+
                     go.AddOptionDouble("Offset", ref stoneOff);
                     go.AddOptionToggle("Reverse", ref boolOption);
 
@@ -173,12 +201,28 @@ namespace FJ_PaveOnLine
                     }
 
 
-                    diamStone = stoneDiam.CurrentValue;
+
                     offSetStone = stoneOff.CurrentValue;
                     optionBool = boolOption.CurrentValue;
 
                     if (optionBool == true)
-                        curve.Reverse();
+                    {
+                        curves[0].Reverse();
+                        curves[1].Reverse();
+                    }
+
+
+                }
+
+
+
+            }
+
+            else
+            {
+                while (true)
+                {
+
 
                     cir_guid_list = new List<Guid>();
                     List<Point3d> points = new List<Point3d>();
@@ -214,10 +258,41 @@ namespace FJ_PaveOnLine
 
                     }
 
-
-
-
                     doc.Views.Redraw();
+
+                    //Options
+                    var go = new GetOption();
+                    go.SetCommandPrompt("Set options.");
+
+                    var stoneDiam = new Rhino.Input.Custom.OptionDouble(diamStone);
+                    var stoneOff = new Rhino.Input.Custom.OptionDouble(offSetStone);
+                    var boolOption = new Rhino.Input.Custom.OptionToggle(false, "Off", "On");
+
+                    go.AddOptionDouble("StoneDiam", ref stoneDiam);
+                    go.AddOptionDouble("Offset", ref stoneOff);
+                    go.AddOptionToggle("Reverse", ref boolOption);
+
+                    go.AcceptNothing(true);
+
+                    var res = go.Get();
+
+                    if (res == GetResult.Nothing) break;
+                    if (res == GetResult.Cancel) break;
+
+                    foreach (var gui in cir_guid_list)
+                    {
+                        var gu = doc.Objects.Find(gui);
+                        doc.Objects.Delete(gu);
+                    }
+
+
+                    diamStone = stoneDiam.CurrentValue;
+                    offSetStone = stoneOff.CurrentValue;
+                    optionBool = boolOption.CurrentValue;
+
+                    if (optionBool == true)
+                        curve.Reverse();
+
                 }
             }
 
