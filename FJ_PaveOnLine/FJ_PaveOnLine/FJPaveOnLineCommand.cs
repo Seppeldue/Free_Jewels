@@ -34,6 +34,7 @@ namespace FJ_PaveOnLine
         bool optionBool = false;
         double diamStone = 1.0;
         double offSetStone = 0.1;
+        double stoneDist = 0.1;
         Curve curve;
         Surface surface;
 
@@ -77,16 +78,23 @@ namespace FJ_PaveOnLine
             {
                 Rhino.DocObjects.ObjRef objref_Line = gl.Object(i);
                 curve = objref_Line.Curve();
-                curves.Add(curve);
+                
+                Curve curveRe = curve.Rebuild(60, 3, true);
+                curves.Add(curveRe);
             }
 
-            
-
-            //Pave options
             List<Guid> cir_guid_list = new List<Guid>();
 
             if (curves.Count > 1)
             {
+                Curve curve2 = curves[0];
+                Curve curve3 = curves[1];
+                if(curve2.IsClosed || curve3.IsClosed)
+                {
+                    Rhino.UI.Dialogs.ShowMessage("Please only select open curves for two line pave.", "Warning!");
+                    return Result.Failure;
+                }
+                
                 while (true)
                 {
                     
@@ -95,12 +103,12 @@ namespace FJ_PaveOnLine
 
 
 
-                    var tweenCurves = Curve.CreateTweenCurvesWithSampling(curves[0], curves[1], 1, 30, tolerance);
+                    var tweenCurves = Curve.CreateTweenCurvesWithSampling(curve2, curve3, 1, 30, tolerance);
                     Curve tCurve = tweenCurves[0];
 
                     //3 point circle
-                    Point3d po1 = curves[0].PointAtStart;
-                    Point3d po2 = curves[1].PointAtStart;
+                    Point3d po1 = curve2.PointAtStart;
+                    Point3d po2 = curve3.PointAtStart;
                     LineCurve line1 = new LineCurve(po1, po2);
                     double[] param = line1.DivideByCount(2, false);
 
@@ -115,7 +123,7 @@ namespace FJ_PaveOnLine
                     while (true)
                     {
 
-                        Circle outCircle = Circle.TryFitCircleTTT(curve1, curves[0], curves[1], param1, param2, param3);
+                        Circle outCircle = Circle.TryFitCircleTTT(curve1, curve2, curve3, param1, param2, param3);
 
                         
                         //circle normal to surface
@@ -128,46 +136,46 @@ namespace FJ_PaveOnLine
                         Point3d surfCenter = surface.PointAt(u, v);
                         Plane pl1 = new Plane(surfCenter, direction);
                         Circle circle = new Circle(pl1, surfCenter, outCircleRadius - offSetStone);
+                        Circle circleDist = new Circle(pl1, surfCenter, outCircleRadius + stoneDist);
                         Guid cir_guid = doc.Objects.AddCircle(circle);
                         cir_guid_list.Add(cir_guid);
 
-                        //if (outCircleRadius/2 >= tCurve.GetLength()) break;
 
                         //Cut tween curve at latest circle center
                         Point3d pointOnCurve;
                         Point3d pointOnCircle;
-                        Curve circleCurve = circle.ToNurbsCurve();
+                        Curve circleDistCurve = circleDist.ToNurbsCurve();
                         tCurve.Domain = new Interval(0, tCurve.GetLength());
-
                         Curve[] splitCurves = tCurve.Split(outCircleRadius);
                         if (splitCurves is null) break;
-                        tCurve = splitCurves[1];
-                        tCurve.ClosestPoints(circleCurve, out pointOnCurve, out pointOnCircle);
+                        tCurve = splitCurves[splitCurves.Length-1];
+                        tCurve.ClosestPoints(circleDistCurve, out pointOnCurve, out pointOnCircle);
 
                         //Cut tween curve at latest circle border
                         double curveSplitParam;
                         tCurve.Domain = new Interval(0, tCurve.GetLength());
                         tCurve.ClosestPoint(pointOnCurve, out curveSplitParam);
                         splitCurves = tCurve.Split(curveSplitParam);
-                        tCurve = splitCurves[1];
+                        if (splitCurves is null) break;
+                        tCurve = splitCurves[splitCurves.Length - 1];
 
                         //New parameter at curve1
                         double circleParam;
-                        circleCurve.ClosestPoint(pointOnCircle, out circleParam);
+                        circleDistCurve.ClosestPoint(pointOnCircle, out circleParam);
                         param1 = circleParam;
-                        curve1 = circleCurve;
+                        curve1 = circleDistCurve;
 
                         //New parameter at curves[0]
                         double paramCurve0New;
-                        curves[0].ClosestPoint(pointOnCircle, out paramCurve0New);
-                        Point3d pointCurve0New = curves[0].PointAt(paramCurve0New);
+                        curve2.ClosestPoint(pointOnCircle, out paramCurve0New);
+                        Point3d pointCurve0New = curve2.PointAt(paramCurve0New);
                         double distNewPoints0 = pointOnCircle.DistanceTo(pointCurve0New);
                         param2 = paramCurve0New + distNewPoints0;
 
                         //New parameter at curves[1]
                         double paramCurve1New;
-                        curves[0].ClosestPoint(pointOnCircle, out paramCurve1New);
-                        Point3d pointCurve1New = curves[1].PointAt(paramCurve1New);
+                        curve3.ClosestPoint(pointOnCircle, out paramCurve1New);
+                        Point3d pointCurve1New = curve3.PointAt(paramCurve1New);
                         double distNewPoints1 = pointOnCircle.DistanceTo(pointCurve1New);
                         param3 = paramCurve1New + distNewPoints1;
                     }
@@ -181,10 +189,12 @@ namespace FJ_PaveOnLine
 
 
                     var stoneOff = new Rhino.Input.Custom.OptionDouble(offSetStone);
+                    var distStone = new Rhino.Input.Custom.OptionDouble(stoneDist);
                     var boolOption = new Rhino.Input.Custom.OptionToggle(false, "Off", "On");
-
+                    
 
                     go.AddOptionDouble("Offset", ref stoneOff);
+                    go.AddOptionDouble("Distance", ref distStone);
                     go.AddOptionToggle("Reverse", ref boolOption);
 
                     go.AcceptNothing(true);
@@ -203,12 +213,16 @@ namespace FJ_PaveOnLine
 
 
                     offSetStone = stoneOff.CurrentValue;
+                    stoneDist = distStone.CurrentValue;
                     optionBool = boolOption.CurrentValue;
 
                     if (optionBool == true)
                     {
-                        curves[0].Reverse();
-                        curves[1].Reverse();
+                        curve2.Reverse();
+                        curve2 = curve2.Rebuild(60, 3, false);
+                        curve3.Reverse();
+                        curve3 = curve3.Rebuild(60, 3, false);
+                        optionBool = false;
                     }
 
 
