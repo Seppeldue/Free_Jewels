@@ -4,7 +4,7 @@
   <Product Id="*" 
            Name="Free Jewels" 
            Language="1033" 
-           Version="1.0.0.1" 
+           Version="1.0.0.2" 
            Manufacturer="Free Jewels" 
            UpgradeCode="d62c1559-b5a9-4c3f-9724-6860c498639f">
 		<Package InstallerVersion="200" 
