@@ -32,6 +32,11 @@ namespace FJ_MultiPipe
         }
 
         //Globals
+        private const int HISTORY_VERSION = 84726599;
+        List<Guid> ids = new List<Guid>();
+        
+
+
         double radius1 = 1.0;
         double radius2 = 1.0;
         string[] caps = new string[] { "None", "Flat", "Round" };
@@ -40,6 +45,9 @@ namespace FJ_MultiPipe
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
+            Rhino.ApplicationSettings.HistorySettings.RecordingEnabled = true;
+            double tolerance = doc.ModelAbsoluteTolerance;
+
             GetObject gc = new GetObject();
             gc.SetCommandPrompt("Select curve(s) for multipipe");
             gc.GeometryFilter = Rhino.DocObjects.ObjectType.Curve;
@@ -49,12 +57,13 @@ namespace FJ_MultiPipe
             if (gc.CommandResult() != Rhino.Commands.Result.Success)
                 return gc.CommandResult();
 
-            List<Curve> ids = new List<Curve>();
+            List<Curve> curves = new List<Curve>();
             for (int i = 0; i < gc.ObjectCount; i++)
             {
                 Rhino.DocObjects.ObjRef objref = gc.Object(i);
                 Rhino.Geometry.Curve curve = objref.Curve();
-                ids.Add(curve);
+                curves.Add(curve);
+                ids.Add(objref.ObjectId);
             }
 
 
@@ -113,16 +122,105 @@ namespace FJ_MultiPipe
             double[] radi = { radius1, radius2, radius1 };
             PipeCapMode[] pCapM = { PipeCapMode.None, PipeCapMode.Flat, PipeCapMode.Round };
 
-            foreach (Curve x in ids)
+            // Create a history record
+            Rhino.DocObjects.HistoryRecord history = new Rhino.DocObjects.HistoryRecord(this, HISTORY_VERSION);
+            WriteHistory(history, ids, radius1, radius2, capIndex);
+
+            foreach (Curve x in curves)
             {
                 pipe = Brep.CreatePipe(x, radiParam, radi, true, pCapM[capIndex], true, doc.ModelAbsoluteTolerance, doc.ModelAngleToleranceRadians);
-                doc.Objects.AddBrep(pipe[0]);
+                doc.Objects.AddBrep(pipe[0], null, history, false);
                 doc.Views.Redraw();
             }
 
 
             doc.Views.Redraw();
             return Result.Success;
+        }
+        /// <summary>
+        /// Rhino calls the virtual ReplayHistory functions to to remake an objects when inputs have changed.  
+        /// </summary>
+        protected override bool ReplayHistory(Rhino.DocObjects.ReplayHistoryData replay)
+        {
+            Rhino.DocObjects.ObjRef objref2 = null;
+            List<Curve> curves2 = new List<Curve>();
+            Brep[] pipe2;
+            PipeCapMode[] pCapM = { PipeCapMode.None, PipeCapMode.Flat, PipeCapMode.Round };
+
+            double radius1 = 0.0;
+            double radius2 = 0.0;
+            double[] radiParam = { 0.0, 0.5, 1.0 };
+            double[] radi = { radius1, radius2, radius1 };
+
+            if (!ReadHistory(replay, ref ids, ref radius1, ref radius2, ref capIndex))
+                return false;
+
+            foreach (Guid i in ids)
+            {
+                objref2 = new ObjRef(i);
+                Rhino.Geometry.Curve curve = objref2.Curve();
+                curves2.Add(curve);
+                
+            }
+
+            foreach (Curve x in curves2)
+            {
+                pipe2 = Brep.CreatePipe(x, radiParam, radi, true, pCapM[capIndex], true, 0.01, 0.01);
+                replay.Results[0].UpdateToBrep(pipe2[0], null);
+            }
+
+          
+
+            return true;
+        }
+
+        /// <summary>
+        /// Read a history record and extract the references for the antecedent objects.
+        /// </summary>
+        private bool ReadHistory(Rhino.DocObjects.ReplayHistoryData replay, ref List<Guid> ids, ref double radius1, ref double radius2, ref int capIndex)
+        {
+            if (HISTORY_VERSION != replay.HistoryVersion)
+                return false;
+            foreach (Guid g in ids)
+            {
+                Guid id;
+                replay.TryGetGuid(0, out id);
+            }
+            
+            //if (null == objrefs)
+            //    return false;
+
+            if (!replay.TryGetDouble(1, out radius1))
+                return false;
+
+            if (!replay.TryGetDouble(2, out radius2))
+                return false;
+
+            if (!replay.TryGetInt(3, out capIndex))
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Write a history record referencing the antecedent objects
+        /// The history should contain all the information required to reconstruct the input.
+        /// This may include parameters, options, or settings.
+        /// </summary>
+        private bool WriteHistory(Rhino.DocObjects.HistoryRecord history, List<Guid> ids, double radius1, double radius2, int capIndex)
+        {
+            if (!history.SetGuids(0, ids))
+                return false;
+
+            if (!history.SetDouble(1, radius1))
+                return false;
+
+            if (!history.SetDouble(2, radius2))
+                return false;
+
+            if (!history.SetInt(3, capIndex))
+                return false;
+            return true;
         }
     }
 }

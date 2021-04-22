@@ -76,47 +76,44 @@ namespace FJ_PaveSet
         // Dynamic Draw
         void RefCircleDraw(object sender, Rhino.Input.Custom.GetPointDrawEventArgs e)
         {
-            Rhino.DocObjects.RhinoObject rhobj = e.Source.Tag as Rhino.DocObjects.RhinoObject;
-            if (rhobj == null)
-                return;
 
-            var centerCircle = e.CurrentPoint;
+            Point3d closestPoint;
+            ComponentIndex compIndex;
             double u, v;
-            var currentPoint = e.CurrentPoint;
-
-            surface.ClosestPoint(currentPoint, out u, out v);
-            var direction = surface.NormalAt(u, v);
-
-            double x = direction.X;
-            double y = direction.Y;
-            double z = direction.Z;
-            Vector3d vtCurr = new Vector3d(x, y, z);
-            Plane planeCircle = new Plane(currentPoint, vtCurr);
-            Point3d centerCircleOff = currentPoint + vtCurr * diamStone / 2;
-
-            Circle dynCircle = new Circle(planeCircle, currentPoint, diamStone / 2);
+            Vector3d vtCurr;
+            brepSurf.ClosestPoint(e.CurrentPoint,out closestPoint,out compIndex, out u, out v, 0.01,out vtCurr);
+            Plane planeCircle = new Plane(e.CurrentPoint, vtCurr);
+            Point3d centerCircleOff = e.CurrentPoint + vtCurr * diamStone / 2;
+            Circle dynCircle = new Circle(planeCircle, e.CurrentPoint, diamStone / 2);
             e.Display.DrawCircle(dynCircle, System.Drawing.Color.Blue);
-            Circle crOff1 = new Circle(planeCircle, currentPoint, (diamStone / 2) + offSetStone);
+            Circle crOff1 = new Circle(planeCircle, e.CurrentPoint, (diamStone / 2) + offSetStone);
             e.Display.DrawCircle(crOff1, System.Drawing.Color.Red);
-            Line dynLineNormal = new Line(currentPoint, centerCircleOff);
+            Line dynLineNormal = new Line(e.CurrentPoint, centerCircleOff);
             e.Display.DrawLine(dynLineNormal, System.Drawing.Color.Blue);
+            e.Display.Draw3dText(diamStone.ToString("F2"), System.Drawing.Color.Black, planeCircle, diamStone / 4, "Arial", false, false, Rhino.DocObjects.TextHorizontalAlignment.Center, Rhino.DocObjects.TextVerticalAlignment.Middle);
         }
 
+        // Globals
         double diamStone = 1.0;
         double offSetStone = 0.1;
         bool optionBool = false;
         bool moveBool = false;
-        Surface surface;
+        Brep brepSurf;
 
 
         protected override Result RunCommand(RhinoDoc doc, RunMode mode)
         {
+
+            Mesh meshSurf;
             List<Guid> ids = new List<Guid>();
             double tolerance = doc.ModelAbsoluteTolerance;
+            const Rhino.DocObjects.ObjectType geometryFilter = Rhino.DocObjects.ObjectType.Surface |
+                                                       Rhino.DocObjects.ObjectType.PolysrfFilter |
+                                                       Rhino.DocObjects.ObjectType.Mesh;
 
             GetObject gs = new Rhino.Input.Custom.GetObject();
             gs.SetCommandPrompt("Surface to orient on");
-            gs.GeometryFilter = Rhino.DocObjects.ObjectType.Surface;
+            gs.GeometryFilter = geometryFilter;
             gs.SubObjectSelect = true;
             gs.DeselectAllBeforePostSelect = true;
             gs.OneByOnePostSelect = true;
@@ -128,9 +125,14 @@ namespace FJ_PaveSet
             Rhino.DocObjects.RhinoObject obj = objref.Object();
             if (obj == null)
                 return Result.Failure;
-            surface = objref.Surface();
 
-            if (surface == null)
+            brepSurf = objref.Brep();
+            if (brepSurf == null)
+            {
+                meshSurf = objref.Mesh();
+                brepSurf = Brep.CreateFromMesh(meshSurf, true);
+            }
+            if (brepSurf == null)
                 return Result.Failure;
             obj.Select(false);
 
@@ -143,13 +145,14 @@ namespace FJ_PaveSet
                 d_key_pressed = false;
 
                 m_escape_key_pressed = false;
+
                 RhinoApp.EscapeKeyPressed += RhinoApp_EscapeKeyPressed;
                 RhinoApp.KeyboardEvent += OnRhinoKeyboardEvent;
 
                 Point3d pt0;
                 GetPoint getPointAction = new GetPoint();
                 getPointAction.SetCommandPrompt("Please select insert point(s) on surface.");
-                getPointAction.Constrain(surface, false);
+                getPointAction.Constrain(brepSurf, -1,-1, false);
 
                 var stoneDiam = new Rhino.Input.Custom.OptionDouble(diamStone);
                 var stoneOff = new Rhino.Input.Custom.OptionDouble(offSetStone);
@@ -216,13 +219,12 @@ namespace FJ_PaveSet
 
                         getPointAction.Get();
                         pt0 = getPointAction.Point();
+                        Point3d closestPoint;
+                        ComponentIndex compIndex;
                         double u, v;
-                        surface.ClosestPoint(pt0, out u, out v);
-                        var direction = surface.NormalAt(u, v);
-                        double x = direction.X;
-                        double y = direction.Y;
-                        double z = direction.Z;
-                        Vector3d vt1 = new Vector3d(x, y, z);
+                        Vector3d vt1;
+
+                        brepSurf.ClosestPoint(pt0, out closestPoint, out compIndex, out u, out v, 0.01, out vt1);
                         Plane pl1 = new Plane(pt0, vt1);
                         Circle cr1 = new Circle(pl1, pt0, diamStone / 2);
                         var crgu = doc.Objects.AddCircle(cr1);
@@ -260,13 +262,11 @@ namespace FJ_PaveSet
                 if (res == GetResult.Point)
                 {
                     pt0 = getPointAction.Point();
+                    Point3d closestPoint;
+                    ComponentIndex compIndex;
                     double u, v;
-                    surface.ClosestPoint(pt0, out u, out v);
-                    var direction = surface.NormalAt(u, v);
-                    double x = direction.X;
-                    double y = direction.Y;
-                    double z = direction.Z;
-                    Vector3d vt1 = new Vector3d(x, y, z);
+                    Vector3d vt1;
+                    brepSurf.ClosestPoint(pt0, out closestPoint, out compIndex, out u, out v, 0.01, out vt1);
                     Plane pl1 = new Plane(pt0, vt1);
                     Circle cr1 = new Circle(pl1, pt0, diamStone / 2);
                     var crgu = doc.Objects.AddCircle(cr1);
