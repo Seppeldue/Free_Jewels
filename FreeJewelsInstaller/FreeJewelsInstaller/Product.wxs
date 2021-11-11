@@ -100,6 +100,9 @@
       <Feature Id="FJ_PaveOnLine" Title="PaveOnLine.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="PaveOnLine.Installer"/>
       </Feature>
+      <Feature Id="FJ_Prongs" Title="Prongs.Installer Plug-Ins" Level="2" Absent="disallow">
+        <MergeRef Id="Prongs.Installer"/>
+      </Feature>
       <Feature Id="FJ_FreeJewelsToolbar" Title="FreeJewelsToolbar.Installer Plug-Ins" Level="2" Absent="disallow">
         <MergeRef Id="FreeJewelsToolbar.Installer"/>
       </Feature>
@@ -219,6 +222,12 @@
     <DirectoryRef Id="TARGETDIR" >
       <Merge Id="PaveOnLine.Installer"
              SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_PaveOnLine\PaveOnLine.Installer\bin\Debug\PaveOnLine.Installer.msm"
+             Language="1033"
+             DiskId="1"/>
+    </DirectoryRef>
+    <DirectoryRef Id="TARGETDIR" >
+      <Merge Id="Prongs.Installer"
+             SourceFile="C:\Users\SEB\source\Repos\Free_Jewels\Free_Jewels_Privat\FJ_Prongs\Prongs.Installer\bin\Debug\Prongs.Installer.msm"
              Language="1033"
              DiskId="1"/>
     </DirectoryRef>

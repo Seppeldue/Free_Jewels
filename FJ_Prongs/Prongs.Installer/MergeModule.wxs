@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Module Id="Prongs.Installer" Language="1033" Version="1.0.0.1">
+		<Package Id="{11563C6F-A92B-4A6F-80A3-8B61B3DAC02C}" 
+             Manufacturer="Free Jewels" 
+             InstallerVersion="200" />
+
+    <!-- This next bit defines the plug-in file and registry entry for Rhino -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <!-- We do a per-user installation to the Roaming AppData folder -->
+      <Directory Id="AppDataFolder" Name="AppDataFolder">
+        <!-- Our directory is called MARIN Rhino Plug-Ins -->
+        <Directory Id="PLUGINFOLDER" Name="Free Jewels Rhino Plug-Ins" >
+          <!-- this defines the RHP file -->
+          <Component Id="FJ_Prongs" Guid="{12637646-E65C-45DB-B6CA-E167707306B8}">
+            <!-- Install the plug-in from dev/bin/win64/Release to the plug-in folder-->
+            <File Id="FJ_Prongs" Name="FJ_Prongs.rhp" Source="C:/Users/SEB/source/Repos/Free_Jewels/Free_Jewels_Privat/FJ_Prongs/FJ_Prongs/bin/FJ_Prongs.rhp"/>
+
+            <!-- this is required because we install in the user profile -->
+            <RemoveFolder Id="remPLUGINFOLDER" Directory="PLUGINFOLDER" On="uninstall"/>
+
+            <!-- this is required because we install in the user profile -->
+            <RegistryKey Root="HKCU" Key="Software\Free Jewels\RhinoPlugIns">
+              <RegistryValue Name="FJ_Prongs" Value="1" KeyPath="yes" Type="integer"/>
+            </RegistryKey>
+
+            <!-- the following will tell Rhinoceros to find the plug-in there on the next run -->
+            <RegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\8c205933-a770-4655-babc-dd5d894e5238">
+              <RegistryValue Name="Name" Value="FJ Common" Type="string"/>
+              <RegistryValue Name="FileName" Value="[PLUGINFOLDER]FJ_Prongs.rhp" Type="string"/>
+            </RegistryKey>
+
+            <!-- when uninstalling, remove the registry entry for this plug-in -->
+            <RemoveRegistryKey Root="HKCU" Key="Software\McNeel\Rhinoceros\6.0\Plug-ins\8c205933-a770-4655-babc-dd5d894e5238" Action="removeOnUninstall" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+  </Module>
+</Wix>
