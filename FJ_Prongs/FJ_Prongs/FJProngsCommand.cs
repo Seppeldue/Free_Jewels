@@ -39,12 +39,14 @@ namespace FJ_Prongs
         private bool m_escape_key_pressed = false;
 
         
-        double prongRadius = 0.5;
+        double prongDia = 1.0;
         int prongCount = 4;
         double hight = 0.1;
         double length = 1;
         double rotation = 0.0;
+        double capHight = 1.0;
         Boolean capBool = true;
+        PipeCapMode capMode = PipeCapMode.Round;
 
         List<Guid> ids = new List<Guid>();
 
@@ -52,6 +54,7 @@ namespace FJ_Prongs
         {
             double tolerance = doc.ModelAbsoluteTolerance;
             double angleTolerance = doc.ModelAngleToleranceRadians;
+
             
             List<Curve> icur = new List<Curve>();
 
@@ -90,16 +93,34 @@ namespace FJ_Prongs
                 
                 List<Point3d> curvePoints = new List<Point3d>() {pt0,pt1};
                 Curve prongCurve = Curve.CreateInterpolatedCurve(curvePoints, 3);
-                var capMode = PipeCapMode.Round;
+                
                 if (!capBool)
                     capMode = PipeCapMode.Flat;
+                else if (capBool)
+                    capMode = PipeCapMode.Round;
 
-                Brep[] cylBrep1 = Brep.CreatePipe(prongCurve, prongRadius, false, capMode, false, tolerance, angleTolerance);
-                Brep cylBrepFinal = cylBrep1[0];
+                Brep[] cylBrep1 = Brep.CreatePipe(prongCurve, prongDia/2, false, capMode, false, tolerance, angleTolerance);
+                Brep cylBrep2 = cylBrep1[0];
+                cylBrep2.Faces.RemoveAt(2);
+                Brep cylBrep3 = cylBrep2.CapPlanarHoles(tolerance);
 
-
+                if (capBool)
+                {
+                    Vector3d scaleVec = new Vector3d(0, 0, 1);
+                    var scalePlane = new Plane(pt0, scaleVec);
+                    var capScale = Transform.Scale(scalePlane, 1.0, 1.0, capHight);
+                    var surf2 = cylBrep3.Faces[1].UnderlyingSurface();
+                    NurbsSurface nurbSurf2 =  surf2.ToNurbsSurface();
+                    nurbSurf2.Transform(capScale);
+                    Brep capBrep = nurbSurf2.ToBrep();
+                    cylBrep3.Append(capBrep);
+                    cylBrep3.Faces.RemoveAt(1);
+                }
+              
+                cylBrep3.Compact();
+                cylBrep3.JoinNakedEdges(tolerance);
                 string instDefCount = DateTime.Now.ToString("ddMMyyyyHHmmss");
-                Brep[] brepArray = new Brep[1] { cylBrepFinal };
+                Brep[] brepArray = new Brep[1] { cylBrep3 };
                 var prongIndex = doc.InstanceDefinitions.Add("Prong" + instDefCount, "RefProng", Point3d.Origin, brepArray);
 
                 foreach (Curve c in icur)
@@ -118,13 +139,14 @@ namespace FJ_Prongs
                     }
 
                     
-                    Curve[] offsetCurveArray = curveProngs.Offset(planeNew, prongRadius/2, tolerance, CurveOffsetCornerStyle.Sharp);
-                    
+                    Curve[] offsetCurveArray = curveProngs.Offset(planeNew, prongDia/4, tolerance, CurveOffsetCornerStyle.Sharp);
+
                     Curve offsetCurve = offsetCurveArray[0];
 
                     double[] segParameters = offsetCurve.DivideByCount(prongCount, true);
 
                     List<Point3d> prongPoints = new List<Point3d>();
+                    List<Guid> idsInter = new List<Guid>();
 
                     foreach (double p in segParameters)
                     {
@@ -142,14 +164,10 @@ namespace FJ_Prongs
 
                         var prongA = doc.Objects.AddInstanceObject(prongIndex, transform1);
                         var prongB = doc.Objects.Transform(prongA, transform2, true);
-                        
 
                         ids.Add(prongB);
 
-                        
                     }
-
-
                     doc.Views.Redraw();
                 }
 
@@ -159,35 +177,39 @@ namespace FJ_Prongs
                 go.AcceptNothing(true);
 
                 var countProng = new Rhino.Input.Custom.OptionInteger(prongCount);
-                var radiusProng = new Rhino.Input.Custom.OptionDouble(prongRadius);
+                var diaProng = new Rhino.Input.Custom.OptionDouble(prongDia);
                 var hightProng = new Rhino.Input.Custom.OptionDouble(hight);
                 var lengthProng = new Rhino.Input.Custom.OptionDouble(length);
                 var rotProng = new Rhino.Input.Custom.OptionDouble(rotation);
-                var capProng = new Rhino.Input.Custom.OptionToggle(true, "No_Cap","Round_Cap");
+                var capProng = new Rhino.Input.Custom.OptionToggle(capBool, "Flat","Round");
+                var hightCap = new Rhino.Input.Custom.OptionDouble(capHight);
 
                 go.AddOptionInteger("Count", ref countProng);
-                go.AddOptionDouble("Radius", ref radiusProng);
+                go.AddOptionDouble("Diameter", ref diaProng);
                 go.AddOptionDouble("Hight", ref hightProng);
                 go.AddOptionDouble("Length", ref lengthProng);
                 go.AddOptionDouble("Rotation", ref rotProng);
                 go.AddOptionToggle("Cap", ref capProng);
-
-
+                if (capBool)
+                {
+                    go.AddOptionDouble("Caphight", ref hightCap);
+                }
 
                 GetResult res = go.Get();
 
                 if (m_escape_key_pressed) break;
 
-
-
                 hight = hightProng.CurrentValue;
                 length = lengthProng.CurrentValue;
                 prongCount = countProng.CurrentValue;
-                prongRadius = radiusProng.CurrentValue;
+                prongDia = diaProng.CurrentValue;
                 rotation = rotProng.CurrentValue;
                 capBool = capProng.CurrentValue;
+                capHight = hightCap.CurrentValue;
 
-
+                if (length <= 0.0) length = 1.0;
+                if (prongCount <= 0) prongCount = 1;
+                if (prongDia <= 0.0) prongDia = 1.0;
                 if (res == GetResult.Nothing) break;
 
                 doc.Objects.Delete(ids, true);

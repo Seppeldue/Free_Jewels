@@ -19,7 +19,7 @@
         </text>
         <tool_bar_id>ee824f1d-de93-46ac-baba-71065d24191e</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="8192" bar_id="59497" mru_width="868" point_pos="-2,-2" float_point="365,213" rect_mru_dock_pos="0,0,0,0" dock_location_u="59419" dock_location="top" float_size="174,566" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="False" floating="True" mru_float_style="8192" bar_id="59495" mru_width="868" point_pos="-2,-2" float_point="365,213" rect_mru_dock_pos="0,0,0,0" dock_location_u="59419" dock_location="top" float_size="174,566" />
     </tool_bar_group>
     <tool_bar_group guid="f3ccd484-3a2e-4f9b-989f-2a6f9cdcf757" dock_bar_guid32="00000000-0000-0000-0000-000000000000" dock_bar_guid64="c7c67515-3bf9-4308-a7ef-575f991931c0" active_tool_bar_group="ea09ce8e-cc1c-4e16-95fb-ebf2fc38daff" single_file="False" hide_single_tab="False" point_floating="1001,404">
       <text>
@@ -31,7 +31,7 @@
         </text>
         <tool_bar_id>e7ac3e65-cde3-4b8a-89d1-ebd7195e29e8</tool_bar_id>
       </tool_bar_group_item>
-      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="True" mru_float_style="4096" bar_id="59498" mru_width="32767" point_pos="-2,-2" float_point="1001,404" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="209,118" />
+      <dock_bar_info dpi_scale="100" dock_bar="False" docking="True" horz="False" visible="True" floating="True" mru_float_style="4096" bar_id="59496" mru_width="868" point_pos="-2,-2" float_point="1001,404" rect_mru_dock_pos="0,0,0,0" dock_location_u="59420" dock_location="left" float_size="209,118" />
     </tool_bar_group>
   </tool_bar_groups>
   <tool_bars>
@@ -648,7 +648,7 @@
       <bitmap_item guid="0202c5eb-ff9d-4460-b2e0-c45ff29f7475" index="34" />
       <bitmap_item guid="4fb0f800-ed04-4e80-b201-04f29fa96c0e" index="35" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABAAAAJACAYAAACE4ua/AAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwgAADsIBFShKgAAAAjFJREFUeF7t08+rTGEAxvEzZWaOojFpEKIusbKwkCwYN1y32M1kZsxM
+AAAOwQAADsEBuJFr7QAAAjFJREFUeF7t08+rTGEAxvEzZWaOojFpEKIusbKwkCwYN1y32M1kZsxM
 VkTRLfnR3bjJbxdZSFlQbCxlRf4CCzY2lOxcWZD4B47nOXNfzWJGV2cz5fup750zb+e8877nnBsB
 AAAAAABkkFdT6qm66YGFWqSWqGk1rlaq1+q+itVAK9QetVfdUY/VK7VM2UP1RT1Sh5TP3apSY+q6
 uq0uqeXKPOkZdU29VIuVHVU+13mF0S71Tt1SR9Ru5V/wuL97groK417lbLlcfpvL5bzaaJ+6oby/
@@ -698,7 +698,7 @@ AADgvxBFvwFKrcsr6mgMiQAAAABJRU5ErkJggg==</bitmap>
       <bitmap_item guid="0202c5eb-ff9d-4460-b2e0-c45ff29f7475" index="34" />
       <bitmap_item guid="4fb0f800-ed04-4e80-b201-04f29fa96c0e" index="35" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAABgAAANgCAYAAAA27qjJAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwgAADsIBFShKgAAAVbpJREFUeF7tfQdcVEfbPZpe1fSiSaTtsksTBFFRbGDFijV2bKAiIPaC
+AAAOwQAADsEBuJFr7QAAVbpJREFUeF7tfQdcVEfbPZpe1fSiSaTtsksTBFFRbGDFijV2bKAiIPaC
 XdFo7CV2TTRqjBqjscRoNCoWNLH3gpVeVGwsz/85s/cud5fdZUHz/773ez2/32Hvzp05Z+aZcoe7
 za4YIOnxX8MLg0LxwqBQPD+DtLKOZEpONpdmOwoWJH5UEi0wem6mjBlYFi0AkzTjvGaNCgpbhZXz
 xkYiyVjcJtiQT2FSDAMb8P/TwOhAnHgWo/zy+ZoSjBPkjLaYFcxbQFyG+RNKAXM0hkVxGcggU0oq
@@ -1123,7 +1123,7 @@ e/vcjxK2TWyBYSklWYCd3f8DkVboq3Z+LV0AAAAASUVORK5CYII=</bitmap>
       <bitmap_item guid="0202c5eb-ff9d-4460-b2e0-c45ff29f7475" index="34" />
       <bitmap_item guid="4fb0f800-ed04-4e80-b201-04f29fa96c0e" index="35" />
       <bitmap>iVBORw0KGgoAAAANSUhEUgAAACAAAASACAYAAACeKU8JAAAABGdBTUEAALGPC/xhBQAAAAlwSFlz
-AAAOwgAADsIBFShKgAAABUBJREFUeF7t11mIXXcBx/HRGJdRUesyKiRKREoyUSpSGgRrq2jrbkwb
+AAAOwQAADsEBuJFr7QAABUBJREFUeF7t11mIXXcBx/HRGJdRUesyKiRKREoyUSpSGgRrq2jrbkwb
 Qe1LqpIYiIlJXCJudalLi/tSDcbog0WhER9KowiVtloj6EssGJeAVu2DaWsTsShSf7/LPeEyzm3a
 LD59PvDlzr1z75n/Ped//ufMDAAAAAAAAAAAAAAAAAAAAMBJenx6X/pd+n26M30kPTqdcY9I16Q9
 aV16U/pr+lv6VHpoOmOent6bvple0xfG3pgOpLtS98RZ6bR4VHpFWjvuc+mf6cVpoXem+8Z9PPX9
